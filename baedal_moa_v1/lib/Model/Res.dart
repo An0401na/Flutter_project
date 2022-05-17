@@ -19,6 +19,7 @@ class Res {
     required this.resInformation,
     required this.resMinOrderPrice,
     required this.resImageDir,
+    required this.deliveryFees,
   });
 
   int resId;
@@ -28,6 +29,7 @@ class Res {
   String resInformation;
   int resMinOrderPrice;
   ResImageDir resImageDir;
+  List<DeliveryFee> deliveryFees;
 
   factory Res.fromJson(Map<String, dynamic> json) => Res(
         resId: json["res_id"],
@@ -37,6 +39,8 @@ class Res {
         resInformation: json["res_information"],
         resMinOrderPrice: json["res_min_order_price"],
         resImageDir: ResImageDir.fromJson(json["res_image_dir"]),
+        deliveryFees: List<DeliveryFee>.from(
+            json["delivery_fees"].map((x) => DeliveryFee.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -47,6 +51,28 @@ class Res {
         "res_information": resInformation,
         "res_min_order_price": resMinOrderPrice,
         "res_image_dir": resImageDir.toJson(),
+        "delivery_fees":
+            List<dynamic>.from(deliveryFees.map((x) => x.toJson())),
+      };
+}
+
+class DeliveryFee {
+  DeliveryFee({
+    required this.delFee,
+    required this.delMinOrderPrice,
+  });
+
+  int delFee;
+  int delMinOrderPrice;
+
+  factory DeliveryFee.fromJson(Map<String, dynamic> json) => DeliveryFee(
+        delFee: json["del_fee"],
+        delMinOrderPrice: json["del_min_order_price"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "del_fee": delFee,
+        "del_min_order_price": delMinOrderPrice,
       };
 }
 

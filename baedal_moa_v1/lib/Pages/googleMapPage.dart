@@ -10,55 +10,98 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'App.dart';
 
 class GoogleMapPage extends StatefulWidget {
+  String userId;
+  GoogleMapPage({Key? key, required this.userId}) : super(key: key);
+
   @override
-  State<GoogleMapPage> createState() => _GoogleMapPageState();
+  _GoogleMapPageState createState() => _GoogleMapPageState();
 }
 
 class _GoogleMapPageState extends State<GoogleMapPage> {
-  List<Marker> myMarker = [];
+  late List<Marker> myMarker = <Marker>[];
+  //x좌표
+  double lat = 0.0;
+  //y좌표
+  double lon = 0.0;
 
-  //현재 위치 받아오기
-  double a = 37.3014;
-  double b = 127.0348;
-
-  getLocation() async {
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    print(position.latitude);
-    print(position.longitude);
-    a = position.latitude;
-    b = position.longitude;
+  @override
+  void initState() {
+    super.initState();
+    getLocation();
   }
 
+  //현재 사용자의 위치 받아오기
+  Future<void> getLocation() async {
+    try {
+      await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.high)
+          .then((result) {
+        print(result.toString());
+        print("현재 사용자 위치 : " +
+            result.latitude.toString() +
+            ", " +
+            result.longitude.toString());
+
+        lat = result.latitude;
+        lon = result.longitude;
+        //현재 좌표를 마커(리스트)에 넣기
+        setState(() {
+          myMarker.add(
+              Marker(markerId: MarkerId("first"), position: LatLng(lat, lon)));
+        });
+      });
+    } catch (error) {
+      print("현재 사용자 위치 받아오기 에러 : " + error.toString());
+    }
+  }
+
+//핑 찍은 곳을 마커에 추가
+  _handleTap(LatLng tappedPoint) {
+    lat = tappedPoint.latitude;
+    lon = tappedPoint.longitude;
+    print("사용자가 마크한 좌표 : " + lat.toString() + ", " + lon.toString());
+
+    setState(() {
+      myMarker = [];
+      myMarker.add(Marker(
+        markerId: MarkerId(tappedPoint.toString()),
+        position: tappedPoint,
+      ));
+    });
+  }
+
+//postPosition 실행
+  _postaddress() {
+    // print("서버에 전송한 좌표 : " + lat.toString() + ", " + lon.toString());
+    postPosition(lat, lon);
+  }
+
+  //서버로 좌표 전송
   Future<void> postPosition(double lat, double lon) async {
     try {
-      final _url = Uri.parse('http://203.249.22.50:8080/noa');
-      http
+      final _url = Uri.parse('http://203.249.22.50:8080/map');
+      await http
           .post(_url, headers: <String, String>{
             'Content-Type': 'application/x-www-form-urlencoded',
           }, body: {
+            "user_id": widget.userId,
             "latitude": lat.toString(),
             "longitude": lon.toString()
           })
           .then((res) => print(json.decode(res.body.toString())))
           .catchError((e) => print(e.toString()));
+      print("서버에 전송한 좌표 : " + lat.toString() + ", " + lon.toString());
     } catch (error) {
-      print('에러' + error.toString());
+      print('구글맵 좌표 전송 에러 : ' + error.toString());
     }
-  }
-
-  @override
-  void initState() {
-    getLocation();
-    super.initState();
-    myMarker.add(Marker(markerId: MarkerId("first"), position: LatLng(a, b)));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('배달 모아'),
+          title: Center(child: Text('배달 모아')),
+          automaticallyImplyLeading: false,
           backgroundColor: Colors.deepOrange,
           foregroundColor: Colors.deepOrange,
           titleTextStyle: TextStyle(
@@ -81,12 +124,14 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
                           color: Colors.deepOrange)),
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.width,
-                  child: GoogleMap(
-                    initialCameraPosition:
-                        CameraPosition(target: LatLng(a, b), zoom: 17.0),
-                    markers: Set.from(myMarker),
-                    onTap: _handleTap,
-                  ),
+                  child: myMarker.isEmpty
+                      ? Center(child: Text("loading map..."))
+                      : GoogleMap(
+                          initialCameraPosition: CameraPosition(
+                              target: myMarker[0].position, zoom: 15.0),
+                          markers: Set.from(myMarker),
+                          onTap: _handleTap,
+                        ),
                 ),
               ),
             ),
@@ -99,31 +144,16 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
                 ),
                 color: Colors.deepOrange,
                 onPressed: () => {
+                  _postaddress(),
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => App(),
+                        builder: (context) => App(userId: widget.userId),
                       ))
                 },
               ),
             )
           ],
         ));
-  }
-
-  _handleTap(LatLng tappedPoint) {
-    double lat = tappedPoint.latitude;
-    double lon = tappedPoint.longitude;
-    print(lat);
-    print(lon);
-    postPosition(lat, lon);
-
-    setState(() {
-      myMarker = [];
-      myMarker.add(Marker(
-        markerId: MarkerId(tappedPoint.toString()),
-        position: tappedPoint,
-      ));
-    });
   }
 }

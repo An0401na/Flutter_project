@@ -15,7 +15,7 @@ class Room_info extends StatelessWidget {
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
-        child: Text(room.roomInfo),
+        child: Text(room.hostUserId.toString()),
       ),
     );
   }

@@ -1,62 +1,178 @@
+import 'dart:convert';
+
+import 'package:baedal_moa/Model/ShoppingCart.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../Model/Menu.dart';
 
-class Menu_info extends StatelessWidget {
+class Menu_info extends StatefulWidget {
   late final Menu menu;
+  late final ShoppingCart shoppingCart;
+  late final ValueChanged<int> update;
 
-  Menu_info({required this.menu});
+  Menu_info(
+      {required this.menu, required this.shoppingCart, required this.update});
+
+  @override
+  State<Menu_info> createState() => _Menu_infoState();
+}
+
+class _Menu_infoState extends State<Menu_info> {
+  int menuCnt = 1;
+  late String imageCode;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    imageCode = utf8.decode(widget.menu.menuImageDir.data);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(menu.menuName),
-        elevation: 0,
+        elevation: 1,
       ),
       body: Column(
         children: [
-          Image.asset(
-            "assets/images/lotteria2.png",
-            width: MediaQuery.of(context).size.width,
+          Container(
+            // color: CupertinoColors.lightBackgroundGray,
+            child: Column(
+              children: [
+                Image.memory(base64Decode(imageCode), width: double.infinity),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 15),
+                  child: Center(
+                    child: Text(
+                      widget.menu.menuName,
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                )
+              ],
+            ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Container(
-                child: Text("가격"),
-                width: 50,
-              ),
-              Expanded(child: Text("가격")),
-            ],
+          Container(height: 1, color: Colors.grey),
+          Container(
+            padding:
+                EdgeInsets.only(top: 30.0, bottom: 30, left: 10, right: 10),
+            child: Row(
+              children: [
+                Container(
+                  child: Text(
+                    "가격",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                      padding: EdgeInsets.only(right: 15),
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        (widget.menu.menuPrice * menuCnt).toString() + " 원",
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
+                      )),
+                ),
+              ],
+            ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Container(
-                child: Text("수량"),
-                width: 50,
-              ),
-              Expanded(child: Text("1개")),
-            ],
+          Container(height: 1, color: Colors.grey),
+          Container(
+            padding:
+                EdgeInsets.only(top: 30.0, bottom: 30, left: 10, right: 10),
+            child: Row(
+              children: [
+                Container(
+                  child: Text(
+                    "수량",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                      alignment: Alignment.centerRight,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                              splashRadius: 10,
+                              onPressed: () {
+                                setState(() {
+                                  if (menuCnt > 1) {
+                                    menuCnt--;
+                                    print(menuCnt.toString());
+                                  }
+                                });
+                              },
+                              icon: Icon(Icons.remove)),
+                          Text(
+                            menuCnt.toString() + " 개",
+                            style: TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.bold),
+                          ),
+                          IconButton(
+                              splashRadius: 10,
+                              onPressed: () {
+                                setState(() {
+                                  if (menuCnt < 100) {
+                                    menuCnt++;
+                                    print(menuCnt.toString());
+                                  }
+                                });
+                              },
+                              icon: Icon(Icons.add)),
+                        ],
+                      )),
+                ),
+              ],
+            ),
           ),
+          Container(height: 1, color: Colors.grey),
+          Expanded(
+              child: Container(
+            color: CupertinoColors.lightBackgroundGray,
+          ))
         ],
       ),
       bottomNavigationBar: BottomAppBar(
         child: SizedBox(
-            width: MediaQuery.of(context).size.width,
+            width: double.infinity,
             height: 90,
             child: Padding(
               padding: EdgeInsets.all(20),
               child: ElevatedButton(
                   child: Text(
-                    "장바구니에 담기",
+                    menuCnt.toString() + " 개 장바구니에 담기",
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 22,
                         fontWeight: FontWeight.w600),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    if (widget.shoppingCart.menusCnt
+                        .containsKey(widget.menu.menuName)) {
+                      widget.shoppingCart.menusCnt.update(
+                          widget.menu.menuName, (value) => value + menuCnt);
+                    } else {
+                      widget.shoppingCart.menus.add(widget.menu);
+                      widget.shoppingCart.menusCnt[widget.menu.menuName] =
+                          menuCnt;
+                    }
+                    int cnt = 0;
+                    for (Menu m in widget.shoppingCart.menus) {
+                      cnt += widget.shoppingCart.menusCnt[m.menuName]!;
+                    }
+                    widget.update(cnt);
+                    print(widget.menu.menuName +
+                        " " +
+                        menuCnt.toString() +
+                        " 개 장바구니에 담김");
+                    Navigator.pop(context);
+                  },
                   style: ElevatedButton.styleFrom(primary: Colors.deepOrange)),
             )),
         elevation: 10,

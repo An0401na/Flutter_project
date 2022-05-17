@@ -1,7 +1,3 @@
-//안쓰임
-
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 
 import '../Model/Room.dart';
@@ -9,7 +5,8 @@ import '../Services/Services_Room.dart';
 import 'Room_info.dart';
 
 class Room_List extends StatefulWidget {
-  Room_List() : super();
+  late String userId;
+  Room_List({Key? key, required this.userId}) : super(key: key);
 
   @override
   _Room_ListState createState() => _Room_ListState();
@@ -21,7 +18,8 @@ class _Room_ListState extends State<Room_List> {
 
   void initState() {
     super.initState();
-    Services_Room.getRooms().then((Room1) {
+    Services_Room.getRooms(widget.userId).then((Room1) {
+      print("aaabbbb");
       setState(() {
         _room = Room1;
       });
@@ -46,34 +44,35 @@ class _Room_ListState extends State<Room_List> {
             height: 1,
             color: Colors.deepOrange,
           ),
-          Expanded(
+          Flexible(
+            fit: FlexFit.tight,
             child: ListView.separated(
               itemCount: _room.length,
               itemBuilder: (context, index) {
                 Room room = _room[index];
                 return ListTile(
                   title: Row(children: [
-                    SizedBox(
-                      width: 300,
+                    Flexible(
+                      fit: FlexFit.tight,
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              room.roomName.toString(),
+                              room.resId,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 20),
                             ),
                             SizedBox(height: 5),
                             Text(
-                              room.roomInfo.toString(),
+                              room.roomName,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(fontSize: 16),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 10),
                               child: Text(
-                                room.hostUserId.toString(),
+                                room.hostUserId,
                                 style:
                                     TextStyle(fontSize: 12, color: Colors.grey),
                               ),
@@ -81,6 +80,7 @@ class _Room_ListState extends State<Room_List> {
                           ]),
                     ),
                     Container(
+                      width: 65,
                       padding: const EdgeInsets.all(5),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -124,7 +124,7 @@ class _Room_ListState extends State<Room_List> {
                       Text(room.roomExpireTime.toString(),
                           style: TextStyle(fontSize: 16)),
                       SizedBox(width: 30),
-                      Text(room.roomOrderPrice.toString(),
+                      Text("현재 인원" + " / " + room.roomMaxPeople.toString(),
                           style: TextStyle(fontSize: 16)),
                       SizedBox(width: 30),
                       Text(room.roomOrderPrice.toString(),
@@ -139,7 +139,7 @@ class _Room_ListState extends State<Room_List> {
                         // return object of type Dialog
                         return AlertDialog(
                           title: Text("<" +
-                              room.roomInfo.toString() +
+                              room.roomName.toString() +
                               "> 방에 참여하시겠습니까?"),
                           actions: <Widget>[
                             TextButton(
@@ -158,8 +158,8 @@ class _Room_ListState extends State<Room_List> {
                                 ),
                                 onPressed: () {
                                   Navigator.pop(context);
-                                  Services_Room.postRoom(
-                                      room.roomId.toString());
+                                  // Services_Room.postRoom(
+                                  //     room.roomId.toString());
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(

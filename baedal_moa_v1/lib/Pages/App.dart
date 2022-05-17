@@ -7,6 +7,8 @@ import 'Restaurant_List.dart';
 import 'Room_List.dart';
 
 class App extends StatefulWidget {
+  late String userId;
+  App({Key? key, required this.userId}) : super(key: key);
   @override
   State<App> createState() => _AppState();
 }
@@ -53,6 +55,7 @@ class _AppState extends State<App> {
         break;
     }
     return AppBar(
+      automaticallyImplyLeading: false,
       title: Center(
         child: Text(currentTitle),
       ),
@@ -71,7 +74,9 @@ class _AppState extends State<App> {
     String contents = "";
     switch (currentPageIndex) {
       case 0:
-        return isCreateRoom ? Restaurant_List() : Room_List();
+        return isCreateRoom
+            ? Restaurant_List()
+            : Room_List(userId: widget.userId);
       case 1:
         contents = "찜 목록";
         break;

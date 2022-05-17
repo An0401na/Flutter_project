@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:kakao_flutter_sdk/all.dart';
 import 'package:flutter/cupertino.dart';
 import 'googleMapPage.dart';
-import 'Home.dart';
+import 'App.dart';
 
 class KakaoLoginPage extends StatefulWidget {
   @override
@@ -13,10 +13,11 @@ class KakaoLoginPage extends StatefulWidget {
 
 class _KakaoLoginPageState extends State<KakaoLoginPage> {
   bool _isKakaoTalkInstalled = false;
+  late String userId;
 
   void initState() {
-    _initKakaoTalkInstalled();
     super.initState();
+    _initKakaoTalkInstalled();
   }
 
   //카카오톡 설치 유무 확인
@@ -41,7 +42,7 @@ class _KakaoLoginPageState extends State<KakaoLoginPage> {
   //카카오 앱을 통한 로그인
   Future<void> _loginWithKakaoApp() async {
     try {
-      print('AAuth Code');
+      print('앱을 통한 로그인');
       String authCode = await AuthCodeClient.instance.requestWithTalk();
       print('코드 : ');
       print(authCode);
@@ -84,11 +85,6 @@ class _KakaoLoginPageState extends State<KakaoLoginPage> {
           .then((res) => print(json.decode(res.body)))
           .catchError((e) => print(e.toString()));
       print('token : ' + token.toString());
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => GoogleMapPage(),
-          ));
       _get_user_info();
       //_accessTokenExist(); // 이거 왜 실행이 안되냐...ㅠㅠ
     } catch (error) {
@@ -105,7 +101,7 @@ class _KakaoLoginPageState extends State<KakaoLoginPage> {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => Home(),
+              builder: (context) => App(userId: userId),
             ));
         _get_user_info();
       } catch (error) {
@@ -117,10 +113,17 @@ class _KakaoLoginPageState extends State<KakaoLoginPage> {
   Future<void> _get_user_info() async {
     try {
       User user = await UserApi.instance.me();
+      userId = user.id.toString();
       print(user.toString());
       print('사용자 정보 요청 성공' +
           '\n회원정보 : ${user.id}' +
           '\n닉네임 : ${user.kakaoAccount?.profile?.nickname}');
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            // GoogleMapPage.getLocation().then(),
+            builder: (context) => GoogleMapPage(userId: userId),
+          ));
     } catch (error) {
       print('사용자 정보요청 실패' + error.toString());
     }
@@ -130,7 +133,7 @@ class _KakaoLoginPageState extends State<KakaoLoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('배달 모아'),
+          title: Center(child: Text('배달 모아')),
           backgroundColor: Colors.deepOrange,
           foregroundColor: Colors.deepOrange,
           titleTextStyle: TextStyle(
@@ -149,7 +152,7 @@ class _KakaoLoginPageState extends State<KakaoLoginPage> {
                 width: MediaQuery.of(context).size.width,
                 child: CupertinoButton(
                   child: Text(
-                    '카카오 로그인',
+                    '카카오 아이디로 로그인',
                     style: TextStyle(fontSize: 15, color: Colors.black),
                   ),
                   color: Colors.yellow,

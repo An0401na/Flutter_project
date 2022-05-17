@@ -3,10 +3,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-
 import '../Model/Res.dart';
 import '../Services/Services_Res.dart';
-import 'Restaurant_info.dart';
 import 'Restaurant_info.dart';
 
 //가게 목록 페이지
@@ -35,12 +33,15 @@ class _Restaurant_ListState extends State<Restaurant_List> {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
+      separatorBuilder: (BuildContext context, int index) {
+        return Container(height: 1, color: Colors.grey);
+      },
       itemCount: _res.length,
       itemBuilder: (context, index) {
         Res res = _res[index];
         return ListTile(
           onTap: () {
-            Services_Res.postRest(res.resName.toString());
+            // Services_Res.postRest(res.resId.toString());
             Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -55,29 +56,37 @@ class _Restaurant_ListState extends State<Restaurant_List> {
               width: 110,
               height: 110,
             ),
-            Container(
-              width: 190,
-              padding: const EdgeInsets.only(left: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    res.resName,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                  ),
-                  Text(
-                    "최소 주문 금액 : " + res.resMinOrderPrice.toString() + "원",
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                  Text(
-                    "배달 요금 : " + "" + "원",
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
-                  )
-                ],
+            Flexible(
+              fit: FlexFit.tight,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      res.resName,
+                      overflow: TextOverflow.ellipsis,
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    ),
+                    Text(
+                      "최소 주문 금액 : " + res.resMinOrderPrice.toString() + "원",
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
+                    Text(
+                      "배달 요금 : " +
+                          res.deliveryFees[0].delFee.toString() +
+                          "~" +
+                          res.deliveryFees.last.delFee.toString() +
+                          " 원",
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                    )
+                  ],
+                ),
               ),
             ),
             Container(
+              width: 65,
               padding: const EdgeInsets.all(5),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -116,9 +125,6 @@ class _Restaurant_ListState extends State<Restaurant_List> {
             )
           ]),
         );
-      },
-      separatorBuilder: (BuildContext context, int index) {
-        return Container(height: 1, color: Colors.grey);
       },
     );
   }
