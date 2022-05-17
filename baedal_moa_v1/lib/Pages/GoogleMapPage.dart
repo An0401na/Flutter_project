@@ -56,11 +56,16 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
       //좌표->주소로 변환
       final placeMarks =
           await placemarkFromCoordinates(lat, lon, localeIdentifier: "ko_KR");
+      print("${placeMarks[0].country}");
+      print("${placeMarks[0].administrativeArea}");
+      print("${placeMarks[0].locality}");
+      print("${placeMarks[0].subLocality}");
+      print("${placeMarks[0].thoroughfare}");
+      print("${placeMarks[0].street}");
       setState(() {
-        locStr =
-            ("${placeMarks[0].country} ${placeMarks[0].administrativeArea} "
-                "${placeMarks[0].locality} ${placeMarks[0].subLocality} "
-                "${placeMarks[0].thoroughfare} ${placeMarks[0].street}");
+        locStr = ("${placeMarks[0].administrativeArea} "
+            "${placeMarks[0].locality} ${placeMarks[0].subLocality} "
+            "${placeMarks[0].thoroughfare} ${placeMarks[0].street}");
       });
     } catch (error) {
       print("현재 사용자 위치 받아오기 에러 : " + error.toString());
@@ -124,6 +129,7 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
           elevation: 1,
         ),
         body: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.all(30.0),
@@ -145,6 +151,15 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
                           onTap: _handleTap,
                         ),
                 ),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(bottom: 30, left: 30, right: 30),
+              alignment: Alignment.center,
+              child: Text(
+                myMarker.isEmpty ? "loading map..." : locStr,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 20),
               ),
             ),
             SizedBox(

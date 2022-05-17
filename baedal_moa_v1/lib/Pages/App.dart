@@ -18,6 +18,7 @@ class _AppState extends State<App> {
   bool isCreateRoom = false;
 
   PreferredSizeWidget appbarWidget() {
+    print(widget.curLoc);
     String currentTitle = "";
     switch (currentPageIndex) {
       case 0:
@@ -38,7 +39,13 @@ class _AppState extends State<App> {
                   icon: isCreateRoom
                       ? Icon(Icons.arrow_back)
                       : Icon(Icons.room, color: Colors.deepOrange)),
-              Text(widget.curLoc, style: TextStyle(color: Colors.black))
+              Expanded(
+                child: Text(
+                  widget.curLoc,
+                  overflow: TextOverflow.fade,
+                  style: TextStyle(color: Colors.black),
+                ),
+              )
             ],
           ),
           elevation: 1,
@@ -98,6 +105,7 @@ class _AppState extends State<App> {
   // 하단의 + 버튼
   FloatingActionButton floatingActionButtonWidget() {
     return FloatingActionButton(
+        elevation: 0,
         child: Icon(
           Icons.add,
           size: 30,
