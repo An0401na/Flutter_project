@@ -4,7 +4,6 @@ import 'package:baedal_moa/Pages/App.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk/all.dart';
-import 'Pages/Home.dart';
 import 'Pages/KakaoLoginPage.dart';
 
 void main() {

@@ -63,6 +63,7 @@ class _Restaurant_infoState extends State<Restaurant_info> {
             MaterialPageRoute(
                 builder: (context) => CartPage(
                       shoppingCart: shoppingCart,
+                      update: update,
                     )));
       },
       elevation: 0,
@@ -192,10 +193,12 @@ class _Restaurant_infoState extends State<Restaurant_info> {
               } else {
                 return ListTile(
                   title: Row(children: [
-                    Image.memory(
-                      base64Decode(utf8.decode(menu.menuImageDir.data)),
-                      width: 100,
-                    ),
+                    ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.memory(
+                          base64Decode(utf8.decode(menu.menuImageDir.data)),
+                          width: 100,
+                        )),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(

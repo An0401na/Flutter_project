@@ -51,10 +51,13 @@ class _Restaurant_ListState extends State<Restaurant_List> {
                 ));
           },
           title: Row(children: [
-            Image.memory(
-              base64Decode(utf8.decode(res.resImageDir.data)),
-              width: 110,
-              height: 110,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.memory(
+                base64Decode(utf8.decode(res.resImageDir.data)),
+                width: 100,
+                height: 100,
+              ),
             ),
             Flexible(
               fit: FlexFit.tight,

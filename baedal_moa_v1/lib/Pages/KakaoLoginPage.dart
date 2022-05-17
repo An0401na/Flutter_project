@@ -101,7 +101,7 @@ class _KakaoLoginPageState extends State<KakaoLoginPage> {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => App(userId: userId),
+              builder: (context) => GoogleMapPage(userId: userId),
             ));
         _get_user_info();
       } catch (error) {

@@ -7,8 +7,10 @@ import 'package:flutter/material.dart';
 import '../Model/Menu.dart';
 
 class CartPage extends StatefulWidget {
-  CartPage({required this.shoppingCart});
   late ShoppingCart shoppingCart;
+  late final ValueChanged<int> update;
+
+  CartPage({required this.shoppingCart, required this.update});
 
   @override
   State<CartPage> createState() => _CartPageState();
@@ -103,9 +105,16 @@ class _CartPageState extends State<CartPage> {
                                   ),
                                   onPressed: () {
                                     setState(() {
+                                      int cnt = 0;
                                       widget.shoppingCart.menus.remove(m);
                                       widget.shoppingCart.menusCnt
                                           .remove(m.menuName);
+                                      for (Menu m
+                                          in widget.shoppingCart.menus) {
+                                        cnt += widget
+                                            .shoppingCart.menusCnt[m.menuName]!;
+                                      }
+                                      widget.update(cnt);
                                     });
                                   },
                                 ),

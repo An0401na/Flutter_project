@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geocoding/geocoding.dart';
 
 import 'App.dart';
 
@@ -19,6 +20,7 @@ class GoogleMapPage extends StatefulWidget {
 
 class _GoogleMapPageState extends State<GoogleMapPage> {
   late List<Marker> myMarker = <Marker>[];
+  late String locStr;
   //x좌표
   double lat = 0.0;
   //y좌표
@@ -44,11 +46,21 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
 
         lat = result.latitude;
         lon = result.longitude;
+
         //현재 좌표를 마커(리스트)에 넣기
         setState(() {
           myMarker.add(
               Marker(markerId: MarkerId("first"), position: LatLng(lat, lon)));
         });
+      });
+      //좌표->주소로 변환
+      final placeMarks =
+          await placemarkFromCoordinates(lat, lon, localeIdentifier: "ko_KR");
+      setState(() {
+        locStr =
+            ("${placeMarks[0].country} ${placeMarks[0].administrativeArea} "
+                "${placeMarks[0].locality} ${placeMarks[0].subLocality} "
+                "${placeMarks[0].thoroughfare} ${placeMarks[0].street}");
       });
     } catch (error) {
       print("현재 사용자 위치 받아오기 에러 : " + error.toString());
@@ -148,7 +160,8 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => App(userId: widget.userId),
+                        builder: (context) =>
+                            App(userId: widget.userId, curLoc: locStr),
                       ))
                 },
               ),

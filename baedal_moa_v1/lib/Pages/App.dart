@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,7 +6,8 @@ import 'Room_List.dart';
 
 class App extends StatefulWidget {
   late String userId;
-  App({Key? key, required this.userId}) : super(key: key);
+  late String curLoc;
+  App({Key? key, required this.userId, required this.curLoc}) : super(key: key);
   @override
   State<App> createState() => _AppState();
 }
@@ -39,7 +38,7 @@ class _AppState extends State<App> {
                   icon: isCreateRoom
                       ? Icon(Icons.arrow_back)
                       : Icon(Icons.room, color: Colors.deepOrange)),
-              Text("현재 위치", style: TextStyle(color: Colors.black))
+              Text(widget.curLoc, style: TextStyle(color: Colors.black))
             ],
           ),
           elevation: 1,
