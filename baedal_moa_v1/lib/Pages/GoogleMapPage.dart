@@ -21,6 +21,7 @@ class GoogleMapPage extends StatefulWidget {
 class _GoogleMapPageState extends State<GoogleMapPage> {
   late List<Marker> myMarker = <Marker>[];
   late String locStr;
+  late String curLoc;
   //x좌표
   double lat = 0.0;
   //y좌표
@@ -63,10 +64,9 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
       print("${placeMarks[0].thoroughfare}");
       print("${placeMarks[0].street}");
       setState(() {
-        locStr = ("${placeMarks[0].administrativeArea} "
-            "${placeMarks[0].locality} ${placeMarks[0].subLocality} "
-            "${placeMarks[0].thoroughfare} ${placeMarks[0].street}");
+        locStr = ("${placeMarks[0].street}");
       });
+      curLoc = "${placeMarks[0].thoroughfare} ${placeMarks[0].subThoroughfare}";
     } catch (error) {
       print("현재 사용자 위치 받아오기 에러 : " + error.toString());
     }
@@ -176,7 +176,7 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            App(userId: widget.userId, curLoc: locStr),
+                            App(userId: widget.userId, curLoc: curLoc),
                       ))
                 },
               ),

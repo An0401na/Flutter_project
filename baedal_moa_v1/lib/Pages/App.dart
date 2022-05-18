@@ -42,7 +42,6 @@ class _AppState extends State<App> {
               Expanded(
                 child: Text(
                   widget.curLoc,
-                  overflow: TextOverflow.fade,
                   style: TextStyle(color: Colors.black),
                 ),
               )
