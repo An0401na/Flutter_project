@@ -23,30 +23,34 @@ class _AppState extends State<App> {
     switch (currentPageIndex) {
       case 0:
         return AppBar(
-          title: Row(
-            children: [
-              IconButton(
+          title: isCreateRoom
+              ? Row(
+                  children: [
+                    IconButton(
+                        onPressed: () {
+                          print("방 목록으로 돌아가기");
+                          setState(() {
+                            isCreateRoom = false;
+                          });
+                        },
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: Colors.deepOrange,
+                        )),
+                    Text(widget.curLoc,
+                        overflow: TextOverflow.fade,
+                        style: TextStyle(color: Colors.black))
+                  ],
+                )
+              : TextButton.icon(
                   onPressed: () {
-                    if (isCreateRoom) {
-                      print("방 목록으로 돌아가기");
-                      setState(() {
-                        isCreateRoom = false;
-                      });
-                    } else {
-                      print("위치 설정");
-                    }
+                    print("위치 설정");
                   },
-                  icon: isCreateRoom
-                      ? Icon(Icons.arrow_back)
-                      : Icon(Icons.room, color: Colors.deepOrange)),
-              Expanded(
-                child: Text(
-                  widget.curLoc,
-                  style: TextStyle(color: Colors.black),
+                  icon: Icon(Icons.room, color: Colors.deepOrange),
+                  label: Text(widget.curLoc,
+                      overflow: TextOverflow.fade,
+                      style: TextStyle(color: Colors.black)),
                 ),
-              )
-            ],
-          ),
           elevation: 1,
         );
       case 1:

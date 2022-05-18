@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:baedal_moa/Model/ShoppingCart.dart';
+import 'package:baedal_moa/Pages/createRoomPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -45,6 +46,10 @@ class _CartPageState extends State<CartPage> {
                   onPressed: () {
                     print("<최종 선택 메뉴>");
                     print(widget.shoppingCart.menusCnt);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CreateRoomPage()),
+                    );
                     // 방 만들기 페이지로
                   },
                   style: ElevatedButton.styleFrom(primary: Colors.deepOrange)),
