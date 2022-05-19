@@ -41,7 +41,7 @@ class Baedal_Moa extends StatelessWidget {
                 home:
                     // KakaoLoginPage()
                     GoogleMapPage(
-                  userId: "",
+                  userId: 0,
                 ));
           }
         });

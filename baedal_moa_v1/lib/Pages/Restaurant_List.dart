@@ -1,5 +1,3 @@
-//안쓰임
-
 import 'dart:convert';
 
 import 'package:baedal_moa/Model/User.dart';
@@ -11,9 +9,9 @@ import 'Restaurant_info.dart';
 
 //가게 목록 페이지
 class Restaurant_List extends StatefulWidget {
-  late String userId;
+  late int userId;
 
-  Restaurant_List({required this.userId}) : super();
+  Restaurant_List({Key? key, required this.userId}) : super(key: key);
   @override
   _Restaurant_ListState createState() => _Restaurant_ListState();
 }
@@ -23,6 +21,7 @@ class _Restaurant_ListState extends State<Restaurant_List> {
   late List<Res> _res = [];
   late bool _loading;
 
+  @override
   void initState() {
     super.initState();
     _loading = true;

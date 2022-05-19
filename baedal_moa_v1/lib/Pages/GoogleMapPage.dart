@@ -12,7 +12,7 @@ import 'App.dart';
 
 class GoogleMapPage extends StatefulWidget {
   // User user;
-  late String userId;
+  late int userId;
   late String userNickname;
   GoogleMapPage({Key? key, required this.userId}) : super(key: key);
 

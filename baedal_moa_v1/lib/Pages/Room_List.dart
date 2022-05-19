@@ -7,7 +7,7 @@ import '../Services/Services_Room.dart';
 import 'Room_info.dart';
 
 class Room_List extends StatefulWidget {
-  String userId;
+  int userId;
   Room_List({Key? key, required this.userId}) : super(key: key);
 
   @override

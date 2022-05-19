@@ -13,7 +13,7 @@
 //
 // class _KakaoLoginPageState extends State<KakaoLoginPage> {
 //   bool _isKakaoTalkInstalled = false;
-//   late String userId;
+//   late int userId;
 //   late String userNickname;
 //
 //   void initState() {
@@ -114,7 +114,7 @@
 //   Future<void> _get_user_info() async {
 //     try {
 //       User user = await UserApi.instance.me();
-//       userId = user.id.toString();
+//       userId = user.id;
 //       // userNickname = '${user.kakaoAccount?.profile?.nickname}';
 //       print(user.toString());
 //       print('사용자 정보 요청 성공' +

@@ -1,3 +1,4 @@
+import 'package:baedal_moa/Pages/GoogleMapPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,7 +7,7 @@ import 'Restaurant_List.dart';
 import 'Room_List.dart';
 
 class App extends StatefulWidget {
-  String userId;
+  int userId;
   late String curLoc;
   App({Key? key, required this.userId, required this.curLoc}) : super(key: key);
   @override
@@ -46,11 +47,18 @@ class _AppState extends State<App> {
               : TextButton.icon(
                   onPressed: () {
                     print("위치 설정");
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              GoogleMapPage(userId: widget.userId),
+                        ));
                   },
                   icon: Icon(Icons.room, color: Colors.deepOrange),
                   label: Text(widget.curLoc,
                       overflow: TextOverflow.fade,
-                      style: TextStyle(color: Colors.black)),
+                      style: TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.w400)),
                 ),
           elevation: 1,
         );

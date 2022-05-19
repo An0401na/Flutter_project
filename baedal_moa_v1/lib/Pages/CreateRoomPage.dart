@@ -1,4 +1,5 @@
 import 'package:baedal_moa/Model/ShoppingCart.dart';
+import 'package:baedal_moa/Pages/Room_info.dart';
 import 'package:baedal_moa/Services/Services_Res.dart';
 import 'package:baedal_moa/Services/Services_Room.dart';
 import 'package:baedal_moa/Services/Services_User.dart';
@@ -14,7 +15,7 @@ import '../Model/User.dart';
 
 class CreateRoomPage extends StatefulWidget {
   Res res;
-  String userId;
+  int userId;
   ShoppingCart shoppingCart;
   DateTime now = DateTime.now();
   // late Room new_room;
@@ -32,7 +33,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
   late Room new_room;
   late String locStr;
 
-  int member_count = 1; //모집인원 저장하는 변수
+  int member_count = 2; //모집인원 저장하는 변수
   int time_count = 5; //모집시간 저장하는 변수
   final room_title = TextEditingController(); //TextField 사용하기 위한 변수
   // 방이름 정보 -> room_title.text에 저장됨
@@ -96,7 +97,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
   }
 
   void _minus() {
-    if (member_count > 1) {
+    if (member_count > 2) {
       setState(() {
         member_count--;
       });
@@ -134,7 +135,8 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
     new_room.roomOrderPrice = widget.shoppingCart.totalPrice;
     new_room.roomDelFee = widget.res.deliveryFees.last.delFee.toInt();
     new_room.roomIsActive = 1;
-    // new_room.roomUser[0] = widget.userId;
+    new_room.roomUser.add(widget.userId);
+
     // Services_Room.postRoom(new_room);
 
     print("방 번호 : " + new_room.roomId.toString());
@@ -223,7 +225,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                   )
                 ],
               ),
-            ),
+            ), //가게 정보
             line,
             Container(
               padding: const EdgeInsets.only(left: 10),
@@ -363,7 +365,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                         Container(
                             color: Colors.deepOrange,
                             width: MediaQuery.of(context).size.width * 0.8,
-                            height: MediaQuery.of(context).size.width * 0.8,
+                            height: MediaQuery.of(context).size.width * 0.6,
                             padding: const EdgeInsets.all(3),
                             child: Container(
                                 color: Colors.white,
@@ -373,7 +375,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                                     : GoogleMap(
                                         initialCameraPosition: CameraPosition(
                                             target: myMarker[0].position,
-                                            zoom: 25.0),
+                                            zoom: 20.0),
                                         markers: Set.from(myMarker),
                                         onTap: _handleTap,
                                       ))),
@@ -395,7 +397,36 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                   '이대로 방 생성하기',
                   style: TextStyle(color: Colors.white),
                 ),
-                onPressed: printn,
+                onPressed: () {
+                  if (room_title.text.isEmpty) {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text("방 제목을 입력해주세요!"),
+                            actions: [
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    "확인",
+                                    style: TextStyle(color: Colors.deepOrange),
+                                  ))
+                            ],
+                          );
+                        });
+                  } else {
+                    printn();
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Room_info(
+                            room: new_room,
+                          ),
+                        ));
+                  }
+                },
               ),
             ) // 방 생성 버튼
           ],
@@ -411,9 +442,6 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
   );
 
   _handleTap(LatLng tappedPoint) {
-    double lai = tappedPoint.latitude;
-    double loni = tappedPoint.longitude;
-
     setState(() {
       myMarker = [];
       myMarker.add(Marker(

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:baedal_moa/Model/ShoppingCart.dart';
-import 'package:baedal_moa/Pages/createRoomPage.dart';
+import 'package:baedal_moa/Pages/CreateRoomPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +13,7 @@ class CartPage extends StatefulWidget {
   late Res res;
   late ShoppingCart shoppingCart;
   late final ValueChanged<int> update;
-  late String userId;
+  late int userId;
 
   CartPage(
       {required this.res,
