@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '';
+import 'package:geocoding/geocoding.dart';
 
 import '../Model/Res.dart';
 import '../Model/Room.dart';
@@ -30,9 +30,10 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
   // late List<User> user = [];
   late User user;
   late Room new_room;
+  late String locStr;
 
-  int member_count = 0; //모집인원 저장하는 변수
-  int time_count = 0; //모집시간 저장하는 변수
+  int member_count = 1; //모집인원 저장하는 변수
+  int time_count = 5; //모집시간 저장하는 변수
   final room_title = TextEditingController(); //TextField 사용하기 위한 변수
   // 방이름 정보 -> room_title.text에 저장됨
 
@@ -50,18 +51,25 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
       myMarker
           .add(Marker(markerId: MarkerId("first"), position: LatLng(lat, lon)));
     });
+
+    final placeMarks =
+        await placemarkFromCoordinates(lat, lon, localeIdentifier: "ko_KR");
+    setState(() {
+      locStr = ("${placeMarks[0].street}");
+      print("LocStr : " + locStr);
+    });
   }
 
   @override
   void initState() {
     super.initState();
     getLocation();
-    print("aaaaa");
+
     new_room = Room(
         roomId: 0,
-        roomName: 'a',
-        resId: 'a',
-        hostUserId: 'a',
+        roomName: '',
+        resId: '',
+        hostUserId: '',
         roomMaxPeople: 0,
         roomExpireTime: DateTime.now(),
         roomStartTime: DateTime.now(),
@@ -71,6 +79,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
         roomDelFee: 0,
         roomIsActive: 0,
         roomUser: []);
+
     // Services_User.getUsers(widget.userId.toString()).then((User1) {
     //   setState(() {
     //     user = User1;
@@ -79,28 +88,36 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
   }
 
   void _plus() {
-    setState(() {
-      member_count++;
-    });
+    if (member_count < 5) {
+      setState(() {
+        member_count++;
+      });
+    }
   }
 
   void _minus() {
-    setState(() {
-      member_count--;
-    });
+    if (member_count > 1) {
+      setState(() {
+        member_count--;
+      });
+    }
   }
 
   void time_plus() {
-    setState(() {
-      time_count = time_count + 5;
-      ;
-    });
+    if (time_count < 30) {
+      setState(() {
+        time_count = time_count + 5;
+        ;
+      });
+    }
   }
 
   void time_minus() {
-    setState(() {
-      time_count = time_count - 5;
-    });
+    if (time_count > 5) {
+      setState(() {
+        time_count = time_count - 5;
+      });
+    }
   }
 
   void printn() {
@@ -118,8 +135,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
     new_room.roomDelFee = widget.res.deliveryFees.last.delFee.toInt();
     new_room.roomIsActive = 1;
     // new_room.roomUser[0] = widget.userId;
-
-    Services_Room.postRoom(new_room);
+    // Services_Room.postRoom(new_room);
 
     print("방 번호 : " + new_room.roomId.toString());
     print("방 이름 : " + new_room.roomName);
@@ -137,43 +153,107 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            res_info,
+            Container(
+              padding: EdgeInsets.only(left: 10, top: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        '가게 정보',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        widget.res.resName,
+                        style: const TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Text('최소주문'),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          Text(widget.res.resMinOrderPrice.toString() + ' 원'),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const Text('배달요금'),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            widget.res.deliveryFees[0].delFee.toString() +
+                                ' ~ ' +
+                                widget.res.deliveryFees.last.delFee.toString() +
+                                ' 원',
+                            style: const TextStyle(color: Colors.deepOrange),
+                          ),
+                        ],
+                      ),
+                      // Row(
+                      //   children: const [
+                      //     Text('배달시간'),
+                      //     Text('  ' + '20분 ~ 30분'),
+                      //   ],
+                      // ),
+                    ],
+                  )
+                ],
+              ),
+            ),
             line,
             Container(
               padding: const EdgeInsets.only(left: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 5.0),
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 10.0),
                     child: Text(
                       '방 정보 설정',
-                      style: TextStyle(fontSize: 17),
+                      style:
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(bottom: 5),
+                    padding: const EdgeInsets.only(bottom: 5),
                     child: Row(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 10.0),
-                          child: const Text('방 제목'),
+                        const Padding(
+                          padding: EdgeInsets.only(right: 10.0),
+                          child: Text('방 제목'),
                         ),
                         Expanded(
                             child: TextField(
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                           ),
-                          controller: room_title,
-                        )), //Textfield넣어야 함
-                        SizedBox(
+                          controller: room_title, //Textfield넣어야 함
+                        )),
+                        const SizedBox(
                           width: 10,
                         )
                       ],
@@ -182,95 +262,63 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                 ],
               ),
             ), //TextField 사용 -> 방제목 입력
-            Container(
-              padding: EdgeInsets.only(bottom: 5),
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('   모집인원 (명)'),
-                  Container(
-                    child: Row(
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(left: 7),
-                          child: IconButton(
-                            icon: Icon(Icons.remove),
-                            iconSize: 14,
-                            onPressed: _minus,
-                          ),
-                          width: 40,
-                          height: 25,
-                          color: Colors.black12,
-                        ),
-                        Container(
-                          width: 40,
-                          height: 25,
-                          child: Text('$member_count'),
-                          margin: EdgeInsets.only(left: 10, right: 10),
-                          padding: EdgeInsets.only(left: 15, top: 4),
-                          decoration: BoxDecoration(
-                            border: Border.all(),
-                          ),
-                        ),
-                        Container(
-                          child: IconButton(
-                            icon: Icon(Icons.add),
-                            iconSize: 14,
-                            onPressed: _plus,
-                          ),
-                          width: 40,
-                          height: 25,
-                          color: Colors.black12,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Text('  (최대 5명 까지)'),
-                ],
-              ),
-            ), //모집인원 +-버튼
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('   모집시간 (분)'),
-                Container(
-                  margin: EdgeInsets.only(left: 7),
-                  child: Row(
+                  Text('모집 인원(명)'),
+                  Row(
                     children: [
-                      Container(
-                        child: IconButton(
-                          icon: Icon(Icons.remove),
-                          iconSize: 14,
-                          onPressed: time_minus,
-                        ),
-                        width: 40,
-                        height: 25,
-                        color: Colors.black12,
+                      IconButton(
+                        splashRadius: 10,
+                        icon: Icon(Icons.remove),
+                        iconSize: 20,
+                        onPressed: _minus,
                       ),
-                      Container(
-                        width: 40,
-                        height: 25,
-                        child: Text('$time_count'),
-                        margin: EdgeInsets.only(left: 10, right: 10),
-                        padding: EdgeInsets.only(left: 15, top: 4),
-                        decoration: BoxDecoration(
-                          border: Border.all(),
-                        ),
+                      Text(
+                        '$member_count',
+                        style: TextStyle(fontSize: 15),
                       ),
-                      Container(
-                        child: IconButton(
-                          icon: Icon(Icons.add),
-                          iconSize: 14,
-                          onPressed: time_plus,
-                        ),
-                        width: 40,
-                        height: 25,
-                        color: Colors.black12,
+                      IconButton(
+                        splashRadius: 10,
+                        icon: Icon(Icons.add),
+                        iconSize: 20,
+                        onPressed: _plus,
                       ),
                     ],
                   ),
-                ),
-              ],
+                  Text('(최대 5명)'),
+                ],
+              ),
+            ), //모집인원 +-버튼
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0),
+              child: Row(
+                children: [
+                  Text('모집 시간(분)'),
+                  Row(
+                    children: [
+                      IconButton(
+                        splashRadius: 10,
+                        icon: Icon(Icons.remove),
+                        iconSize: 20,
+                        onPressed: time_minus,
+                      ),
+                      Text(
+                        '$time_count',
+                        style: TextStyle(fontSize: 15),
+                      ),
+                      IconButton(
+                        splashRadius: 10,
+                        icon: Icon(Icons.add),
+                        iconSize: 20,
+                        onPressed: time_plus,
+                      ),
+                    ],
+                  ),
+                  Text('(최대 30분)'),
+                ],
+              ),
             ), // 모집시간 +-버튼 ->5분 단위로 설정함
             line,
             Column(
@@ -280,7 +328,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                   padding: const EdgeInsets.only(left: 10.0, bottom: 10),
                   child: Text(
                     '음식 받을 곳',
-                    style: TextStyle(fontSize: 17),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                   ),
                 ),
                 Container(
@@ -293,22 +341,39 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(bottom: 20),
-                          child: Text(
-                            '주소 : 경기도 수원시 연무동',
-                            style: TextStyle(fontSize: 15),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                '주소 : ',
+                                style: TextStyle(fontSize: 15),
+                              ),
+                              myMarker.isEmpty
+                                  ? Text(
+                                      'loading map...',
+                                      style: TextStyle(fontSize: 15),
+                                    )
+                                  : Text(
+                                      locStr,
+                                      style: TextStyle(fontSize: 15),
+                                    )
+                            ],
                           ),
                         ),
                         Container(
+                            color: Colors.deepOrange,
                             width: MediaQuery.of(context).size.width * 0.8,
                             height: MediaQuery.of(context).size.width * 0.8,
-                            margin: EdgeInsets.only(right: 3),
+                            padding: const EdgeInsets.all(3),
                             child: Container(
+                                color: Colors.white,
                                 child: myMarker.isEmpty
-                                    ? Center(child: Text("loading map..."))
+                                    ? const Center(
+                                        child: Text("loading map..."))
                                     : GoogleMap(
                                         initialCameraPosition: CameraPosition(
                                             target: myMarker[0].position,
-                                            zoom: 20.0),
+                                            zoom: 25.0),
                                         markers: Set.from(myMarker),
                                         onTap: _handleTap,
                                       ))),
@@ -316,109 +381,33 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                     ),
                   ),
                 ),
-                Container(
-                  padding: EdgeInsets.only(top: 10, left: 100, right: 100),
-                  width: double.infinity,
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                        backgroundColor: Colors.deepOrange,
-                        minimumSize: Size(100, 40)),
-                    child: Text(
-                      '이대로 방 생성하기',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onPressed: printn,
-                  ),
-                )
               ],
-            ), //구글맵 연동
+            ), //음식 받을곳 (구글맵 연동)
+            Container(
+              padding: const EdgeInsets.only(
+                  top: 10, left: 100, right: 100, bottom: 10),
+              width: double.infinity,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                    backgroundColor: Colors.deepOrange,
+                    minimumSize: Size(100, 40)),
+                child: const Text(
+                  '이대로 방 생성하기',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onPressed: printn,
+              ),
+            ) // 방 생성 버튼
           ],
         ),
       ),
     );
   }
 
-  @override
   Widget line = Container(
     margin: EdgeInsets.only(top: 10, bottom: 10),
     height: 1,
     color: Colors.grey,
-  );
-
-  Widget res_info = Container(
-    padding: EdgeInsets.only(left: 10, top: 10),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '가게 정보',
-                style: TextStyle(
-                  fontSize: 17,
-                ),
-              ),
-              SizedBox(
-                height: 5,
-              ),
-              Text(
-                '롯데리아 연무점',
-                style: TextStyle(
-                  fontSize: 20,
-                ),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(
-          height: 5,
-        ),
-        Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                child: Row(
-                  children: [
-                    Text('최소주문'),
-                    Text('  ' + '8,000원'),
-                  ],
-                ),
-              ),
-              Container(
-                child: Row(
-                  children: [
-                    Text('배달요금'),
-                    Text(
-                      '  ' + '무료 ~ 3,500원',
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                child: Row(
-                  children: [
-                    Text('배달시간'),
-                    Text('  ' + '20분 ~ 30분'),
-                  ],
-                ),
-              ),
-              Container(
-                child: Row(
-                  children: [
-                    Text('가게거리'),
-                    Text('  ' + '1.1km'),
-                  ],
-                ),
-              )
-            ],
-          ),
-        )
-      ],
-    ),
   );
 
   _handleTap(LatLng tappedPoint) {
