@@ -239,7 +239,7 @@ class _Room_infoState extends State<Room_info> {
                     SizedBox(
                       width: 5,
                     ),
-                    Text()
+                    Text('')
                   ],
                 ),
               ))
