@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../Model/User.dart';
 import 'Restaurant_List.dart';
 import 'Room_List.dart';
 
 class App extends StatefulWidget {
-  late String userId;
+  String userId;
   late String curLoc;
   App({Key? key, required this.userId, required this.curLoc}) : super(key: key);
   @override
@@ -84,7 +85,7 @@ class _AppState extends State<App> {
     switch (currentPageIndex) {
       case 0:
         return isCreateRoom
-            ? Restaurant_List()
+            ? Restaurant_List(userId: widget.userId)
             : Room_List(userId: widget.userId);
       case 1:
         contents = "찜 목록";

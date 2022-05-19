@@ -2,14 +2,18 @@
 
 import 'dart:convert';
 
+import 'package:baedal_moa/Model/User.dart';
 import 'package:flutter/material.dart';
 import '../Model/Res.dart';
 import '../Services/Services_Res.dart';
+import '../Services/Services_User.dart';
 import 'Restaurant_info.dart';
 
 //가게 목록 페이지
 class Restaurant_List extends StatefulWidget {
-  Restaurant_List() : super();
+  late String userId;
+
+  Restaurant_List({required this.userId}) : super();
   @override
   _Restaurant_ListState createState() => _Restaurant_ListState();
 }
@@ -22,6 +26,7 @@ class _Restaurant_ListState extends State<Restaurant_List> {
   void initState() {
     super.initState();
     _loading = true;
+
     Services_Res.getRests().then((Res1) {
       setState(() {
         _res = Res1;
@@ -41,13 +46,11 @@ class _Restaurant_ListState extends State<Restaurant_List> {
         Res res = _res[index];
         return ListTile(
           onTap: () {
-            // Services_Res.postRest(res.resId.toString());
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => Restaurant_info(
-                    res: res,
-                  ),
+                  builder: (context) =>
+                      Restaurant_info(res: res, userId: widget.userId),
                 ));
           },
           title: Row(children: [

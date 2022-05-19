@@ -7,12 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../Model/Res.dart';
 import '../Model/Menu.dart';
+import '../Model/User.dart';
 import '../Services/Services_Menu.dart';
 import 'CartPage.dart';
 
 class Restaurant_info extends StatefulWidget {
   Res res;
-  Restaurant_info({Key? key, required this.res}) : super(key: key);
+  String userId;
+  Restaurant_info({required this.res, required this.userId});
 
   @override
   _Restaurant_infoState createState() => _Restaurant_infoState();
@@ -20,15 +22,14 @@ class Restaurant_info extends StatefulWidget {
 
 class _Restaurant_infoState extends State<Restaurant_info> {
   late List<Menu> _menu = [];
-  late List<Menu> new_menu = [];
   late ShoppingCart shoppingCart;
 
   int menuCnt = 0;
 
   void initState() {
     super.initState();
-    shoppingCart =
-        ShoppingCart(resId: widget.res.resId, menus: [], menusCnt: {});
+    shoppingCart = ShoppingCart(
+        resId: widget.res.resId, menus: [], menusCnt: {}, totalPrice: 0);
     Services_Menu.getMenus(widget.res.resId.toString()).then((Menu1) {
       setState(() {
         _menu = Menu1;
@@ -57,13 +58,15 @@ class _Restaurant_infoState extends State<Restaurant_info> {
       shape:
           StadiumBorder(side: BorderSide(color: Colors.deepOrange, width: 3)),
       onPressed: () {
-        print("장바구니:" + shoppingCart.menusCnt.toString());
+        print("장바구니 : " + shoppingCart.menusCnt.toString());
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => CartPage(
+                      res: widget.res,
                       shoppingCart: shoppingCart,
                       update: update,
+                      userId: widget.userId,
                     )));
       },
       elevation: 0,

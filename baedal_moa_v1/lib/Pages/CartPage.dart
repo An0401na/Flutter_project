@@ -6,12 +6,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../Model/Menu.dart';
+import '../Model/Res.dart';
+import '../Model/User.dart';
 
 class CartPage extends StatefulWidget {
+  late Res res;
   late ShoppingCart shoppingCart;
   late final ValueChanged<int> update;
+  late String userId;
 
-  CartPage({required this.shoppingCart, required this.update});
+  CartPage(
+      {required this.res,
+      required this.shoppingCart,
+      required this.update,
+      required this.userId});
 
   @override
   State<CartPage> createState() => _CartPageState();
@@ -23,6 +31,7 @@ class _CartPageState extends State<CartPage> {
     // for (Menu mN in shoppingCart.menus) {
     //   print(mN.menuName);
     // }
+
     return Scaffold(
       appBar: AppBar(
         title: Text("장바구니"),
@@ -45,10 +54,15 @@ class _CartPageState extends State<CartPage> {
                   ),
                   onPressed: () {
                     print("<최종 선택 메뉴>");
-                    print(widget.shoppingCart.menusCnt);
+                    print(
+                        "선택한 메뉴 : " + widget.shoppingCart.menusCnt.toString());
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => CreateRoomPage()),
+                      MaterialPageRoute(
+                          builder: (context) => CreateRoomPage(
+                              shoppingCart: widget.shoppingCart,
+                              res: widget.res,
+                              userId: widget.userId)),
                     );
                     // 방 만들기 페이지로
                   },
@@ -64,6 +78,7 @@ class _CartPageState extends State<CartPage> {
     for (Menu m in widget.shoppingCart.menus) {
       int? cnt = widget.shoppingCart.menusCnt[m.menuName];
       totalPrice += m.menuPrice * cnt!;
+      widget.shoppingCart.totalPrice = totalPrice;
     }
     return Column(
       children: [

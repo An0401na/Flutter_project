@@ -7,11 +7,13 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
-
+import '../Model/User.dart';
 import 'App.dart';
 
 class GoogleMapPage extends StatefulWidget {
-  String userId;
+  // User user;
+  late String userId;
+  late String userNickname;
   GoogleMapPage({Key? key, required this.userId}) : super(key: key);
 
   @override
@@ -55,35 +57,39 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
         });
       });
       //좌표->주소로 변환
-      final placeMarks =
-          await placemarkFromCoordinates(lat, lon, localeIdentifier: "ko_KR");
-      print("${placeMarks[0].country}");
-      print("${placeMarks[0].administrativeArea}");
-      print("${placeMarks[0].locality}");
-      print("${placeMarks[0].subLocality}");
-      print("${placeMarks[0].thoroughfare}");
-      print("${placeMarks[0].street}");
-      setState(() {
-        locStr = ("${placeMarks[0].street}");
-      });
-      curLoc = "${placeMarks[0].thoroughfare} ${placeMarks[0].subThoroughfare}";
+      _getAddress();
     } catch (error) {
       print("현재 사용자 위치 받아오기 에러 : " + error.toString());
     }
   }
 
+  _getAddress() async {
+    final placeMarks =
+        await placemarkFromCoordinates(lat, lon, localeIdentifier: "ko_KR");
+    setState(() {
+      locStr = ("${placeMarks[0].street}");
+      print("LocStr : " + locStr);
+      curLoc = "${placeMarks[0].thoroughfare} ${placeMarks[0].subThoroughfare}";
+    });
+  }
+
 //핑 찍은 곳을 마커에 추가
-  _handleTap(LatLng tappedPoint) {
+  _handleTap(LatLng tappedPoint) async {
     lat = tappedPoint.latitude;
     lon = tappedPoint.longitude;
     print("사용자가 마크한 좌표 : " + lat.toString() + ", " + lon.toString());
-
+    _getAddress();
+    // final placeMarks =
+    //     await placemarkFromCoordinates(lat, lon, localeIdentifier: "ko_KR");
     setState(() {
       myMarker = [];
       myMarker.add(Marker(
-        markerId: MarkerId(tappedPoint.toString()),
+        markerId: MarkerId("first"),
         position: tappedPoint,
       ));
+      // locStr = ("${placeMarks[0].street}");
+      // print("LocStr : " + locStr);
+      // curLoc = "${placeMarks[0].thoroughfare} ${placeMarks[0].subThoroughfare}";
     });
   }
 

@@ -1,11 +1,13 @@
+import 'package:baedal_moa/Services/Services_User.dart';
 import 'package:flutter/material.dart';
 
 import '../Model/Room.dart';
+import '../Model/User.dart';
 import '../Services/Services_Room.dart';
 import 'Room_info.dart';
 
 class Room_List extends StatefulWidget {
-  late String userId;
+  String userId;
   Room_List({Key? key, required this.userId}) : super(key: key);
 
   @override
@@ -15,11 +17,11 @@ class Room_List extends StatefulWidget {
 class _Room_ListState extends State<Room_List> {
   @override
   late List<Room> _room = [];
+  // late List<User> user = [];
 
   void initState() {
     super.initState();
-    Services_Room.getRooms(widget.userId).then((Room1) {
-      print("aaabbbb");
+    Services_Room.getRooms(widget.userId.toString()).then((Room1) {
       setState(() {
         _room = Room1;
       });
