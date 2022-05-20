@@ -17,7 +17,6 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   late Icon appBarIcon;
   int currentPageIndex = 0;
-  bool isCreateRoom = false;
 
   PreferredSizeWidget appbarWidget() {
     print(widget.curLoc);
@@ -25,41 +24,21 @@ class _AppState extends State<App> {
     switch (currentPageIndex) {
       case 0:
         return AppBar(
-          title: isCreateRoom
-              ? Row(
-                  children: [
-                    IconButton(
-                        onPressed: () {
-                          print("방 목록으로 돌아가기");
-                          setState(() {
-                            isCreateRoom = false;
-                          });
-                        },
-                        icon: Icon(
-                          Icons.arrow_back,
-                          color: Colors.deepOrange,
-                        )),
-                    Text(widget.curLoc,
-                        overflow: TextOverflow.fade,
-                        style: TextStyle(color: Colors.black))
-                  ],
-                )
-              : TextButton.icon(
-                  onPressed: () {
-                    print("위치 설정");
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              GoogleMapPage(userId: widget.userId),
-                        ));
-                  },
-                  icon: Icon(Icons.room, color: Colors.deepOrange),
-                  label: Text(widget.curLoc,
-                      overflow: TextOverflow.fade,
-                      style: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.w400)),
-                ),
+          title: TextButton.icon(
+            onPressed: () {
+              print("위치 설정");
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => GoogleMapPage(userId: widget.userId),
+                  ));
+            },
+            icon: Icon(Icons.room, color: Colors.deepOrange),
+            label: Text(widget.curLoc,
+                overflow: TextOverflow.fade,
+                style: TextStyle(
+                    color: Colors.black, fontWeight: FontWeight.w400)),
+          ),
           elevation: 1,
         );
       case 1:
@@ -92,9 +71,7 @@ class _AppState extends State<App> {
     String contents = "";
     switch (currentPageIndex) {
       case 0:
-        return isCreateRoom
-            ? Restaurant_List(userId: widget.userId)
-            : Room_List(userId: widget.userId);
+        return Room_List(userId: widget.userId);
       case 1:
         contents = "찜 목록";
         break;
@@ -148,9 +125,14 @@ class _AppState extends State<App> {
                       ),
                       onPressed: () {
                         Navigator.pop(context);
-                        setState(() {
-                          isCreateRoom = true;
-                        });
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Restaurant_List(
+                                curLoc: widget.curLoc,
+                                userId: widget.userId,
+                              ),
+                            ));
                       })
                 ],
               );
@@ -188,21 +170,12 @@ class _AppState extends State<App> {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: [SystemUiOverlay.bottom]);
     if (currentPageIndex == 0) {
-      if (!isCreateRoom) {
-        return Scaffold(
-            appBar: appbarWidget(),
-            endDrawer: drawerWidget(context),
-            body: bodyWidget(context),
-            floatingActionButton: floatingActionButtonWidget(),
-            bottomNavigationBar: bottomNavigationBarWidget());
-      } else {
-        return Scaffold(
+      return Scaffold(
           appBar: appbarWidget(),
           endDrawer: drawerWidget(context),
           body: bodyWidget(context),
-          bottomNavigationBar: bottomNavigationBarWidget(),
-        );
-      }
+          floatingActionButton: floatingActionButtonWidget(),
+          bottomNavigationBar: bottomNavigationBarWidget());
     } else if (currentPageIndex == 2) {
       return Scaffold(
         body: bodyWidget(context),

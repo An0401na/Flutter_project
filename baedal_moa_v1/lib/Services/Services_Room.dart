@@ -15,10 +15,17 @@ class Services_Room {
       }, body: {
         "user_id": userId
       });
-      print(response.statusCode.toString());
+      print(userId);
+      print("방 상태코드  : " + response.statusCode.toString());
       if (200 == response.statusCode) {
         final List<Room> room = roomFromJson(response.body);
-        print("먹친방 바디 : " + response.body);
+        // print("먹친방 바디 : " + response.body);
+        for (Room r in room) {
+          print("방 번호: " +
+              r.roomId.toString() +
+              " , 멤버 수: " +
+              r.roomUser.length.toString());
+        }
         return room;
       } else {
         print('Room empty');

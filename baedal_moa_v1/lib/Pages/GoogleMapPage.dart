@@ -107,7 +107,7 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
           .post(_url, headers: <String, String>{
             'Content-Type': 'application/x-www-form-urlencoded',
           }, body: {
-            "user_id": widget.userId,
+            "user_id": widget.userId.toString(),
             "latitude": lat.toString(),
             "longitude": lon.toString()
           })
@@ -134,60 +134,65 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
               fontWeight: FontWeight.bold),
           elevation: 1,
         ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(30.0),
-              child: Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                          width: 3,
-                          style: BorderStyle.solid,
-                          color: Colors.deepOrange)),
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.width,
-                  child: myMarker.isEmpty
-                      ? Center(child: Text("loading map..."))
-                      : GoogleMap(
-                          initialCameraPosition: CameraPosition(
-                              target: myMarker[0].position, zoom: 15.0),
-                          markers: Set.from(myMarker),
-                          onTap: _handleTap,
-                        ),
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(30.0),
+                child: Center(
+                  child: Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            width: 3,
+                            style: BorderStyle.solid,
+                            color: Colors.deepOrange)),
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.width,
+                    child: myMarker.isEmpty
+                        ? Center(child: Text("loading map..."))
+                        : GoogleMap(
+                            initialCameraPosition: CameraPosition(
+                                target: myMarker[0].position, zoom: 18.0),
+                            markers: Set.from(myMarker),
+                            onTap: _handleTap,
+                          ),
+                  ),
                 ),
               ),
-            ),
-            Container(
-              padding: EdgeInsets.only(bottom: 30, left: 30, right: 30),
-              alignment: Alignment.center,
-              child: Text(
-                myMarker.isEmpty ? "loading map..." : locStr,
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 20),
-              ),
-            ),
-            SizedBox(
-              width: 230,
-              child: CupertinoButton(
+              Container(
+                padding: EdgeInsets.only(bottom: 30, left: 30, right: 30),
+                alignment: Alignment.center,
                 child: Text(
-                  '이 위치로 설정하기',
-                  style: TextStyle(fontSize: 13, color: Colors.white),
+                  myMarker.isEmpty ? "loading map..." : locStr,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 20),
                 ),
-                color: Colors.deepOrange,
-                onPressed: () => {
-                  _postaddress(),
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            App(userId: widget.userId, curLoc: curLoc),
-                      ))
-                },
               ),
-            )
-          ],
+              SizedBox(
+                width: 230,
+                child: CupertinoButton(
+                  child: Text(
+                    '이 위치로 설정하기',
+                    style: TextStyle(fontSize: 13, color: Colors.white),
+                  ),
+                  color: Colors.deepOrange,
+                  onPressed: () => {
+                    if (curLoc.isNotEmpty)
+                      {
+                        _postaddress(),
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  App(userId: widget.userId, curLoc: curLoc),
+                            ))
+                      }
+                  },
+                ),
+              )
+            ],
+          ),
         ));
   }
 }

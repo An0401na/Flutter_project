@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 
@@ -159,6 +158,7 @@ class _Room_infoState extends State<Room_info> {
                                 : Text(
                                     locStr,
                                     style: TextStyle(fontSize: 15),
+                                    overflow: TextOverflow.visible,
                                   )
                           ],
                         ),
@@ -175,7 +175,7 @@ class _Room_infoState extends State<Room_info> {
                                   : GoogleMap(
                                       initialCameraPosition: CameraPosition(
                                           target: myMarker[0].position,
-                                          zoom: 20.0),
+                                          zoom: 18.0),
                                       markers: Set.from(myMarker),
                                     ))),
                     ],
@@ -196,7 +196,22 @@ class _Room_infoState extends State<Room_info> {
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
             ),
           ),
-          Expanded(child: ListView())
+          Expanded(
+            child: ListView.separated(
+              itemCount: widget.room.roomUser.length + 1,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                  color: Colors.grey,
+                  height: 1,
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return Container(
+                  child: Text(widget.room.roomUser[index].toString()),
+                );
+              },
+            ),
+          )
         ],
       ),
       bottomNavigationBar: BottomAppBar(
@@ -206,32 +221,41 @@ class _Room_infoState extends State<Room_info> {
           child: Row(
             children: [
               Container(
-                padding: EdgeInsets.all(5),
+                padding: EdgeInsets.all(2),
                 decoration: BoxDecoration(
                     border: Border.all(
                         width: 1,
                         style: BorderStyle.solid,
                         color: Colors.deepOrange)),
-                child: Row(
-                  children: [
-                    Text("현재 인당 배달료"),
-                    SizedBox(
-                      width: 5,
+                child: Container(
+                  padding: EdgeInsets.all(1),
+                  color: Colors.deepOrange,
+                  child: Container(
+                    padding:
+                        EdgeInsets.only(top: 8, bottom: 8, left: 2, right: 2),
+                    color: Colors.white,
+                    child: Row(
+                      children: [
+                        Text("현재 인당 배달료"),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          (widget.room.roomDelFee / widget.room.roomUser.length)
+                              .ceil()
+                              .toInt()
+                              .toString(),
+                          style: TextStyle(color: Colors.deepOrange),
+                        ),
+                        Text("원"),
+                      ],
                     ),
-                    Text(
-                      (widget.room.roomOrderPrice / widget.room.roomUser.length)
-                          .toInt()
-                          .toString(),
-                      style: TextStyle(color: Colors.deepOrange),
-                    ),
-                    Text(" 원"),
-                  ],
+                  ),
                 ),
               ),
               Expanded(
                   child: Container(
                 alignment: Alignment.centerRight,
-                color: Colors.yellow,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -239,7 +263,10 @@ class _Room_infoState extends State<Room_info> {
                     SizedBox(
                       width: 5,
                     ),
-                    Text('')
+                    Text(
+                      '얼마',
+                      style: TextStyle(color: Colors.deepOrange),
+                    )
                   ],
                 ),
               ))

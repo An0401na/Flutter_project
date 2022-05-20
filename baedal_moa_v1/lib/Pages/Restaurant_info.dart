@@ -92,7 +92,9 @@ class _Restaurant_infoState extends State<Restaurant_info> {
             elevation: 0,
           ),
           extendBodyBehindAppBar: true,
-          floatingActionButton: floatingActionButtonWidget(),
+          floatingActionButton: Visibility(
+              visible: shoppingCart.menus.isEmpty ? false : true,
+              child: floatingActionButtonWidget()),
           body: ListView.separated(
               separatorBuilder: (BuildContext context, int index) {
                 return Container(

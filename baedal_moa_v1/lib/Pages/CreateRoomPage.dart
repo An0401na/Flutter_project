@@ -17,7 +17,7 @@ class CreateRoomPage extends StatefulWidget {
   Res res;
   int userId;
   ShoppingCart shoppingCart;
-  DateTime now = DateTime.now();
+  DateTime curTime = DateTime.now();
   // late Room new_room;
 
   CreateRoomPage(
@@ -52,7 +52,9 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
       myMarker
           .add(Marker(markerId: MarkerId("first"), position: LatLng(lat, lon)));
     });
+  }
 
+  getLocStr() async {
     final placeMarks =
         await placemarkFromCoordinates(lat, lon, localeIdentifier: "ko_KR");
     setState(() {
@@ -128,8 +130,8 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
     new_room.resId = widget.res.resId.toString();
     new_room.hostUserId = widget.userId.toString();
     new_room.roomMaxPeople = member_count.toInt();
-    new_room.roomStartTime = widget.now;
-    new_room.roomExpireTime = widget.now.add(Duration(minutes: time_count));
+    new_room.roomStartTime = widget.curTime;
+    new_room.roomExpireTime = widget.curTime.add(Duration(minutes: time_count));
     new_room.roomLocationX = myMarker[0].position.latitude.toString();
     new_room.roomLocationY = myMarker[0].position.longitude.toString();
     new_room.roomOrderPrice = widget.shoppingCart.totalPrice;
@@ -137,7 +139,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
     new_room.roomIsActive = 1;
     new_room.roomUser.add(widget.userId);
 
-    // Services_Room.postRoom(new_room);
+    Services_Room.postRoom(new_room);
 
     print("방 번호 : " + new_room.roomId.toString());
     print("방 이름 : " + new_room.roomName);
@@ -149,6 +151,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
     print("배달비 : " + new_room.roomDelFee.toString());
     print("음식 받을 곳(위도) : " + myMarker[0].position.latitude.toString());
     print("음식 받을 곳(경도) : " + myMarker[0].position.longitude.toString());
+    print(new_room.roomUser);
   }
 
   @override
