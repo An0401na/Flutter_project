@@ -253,7 +253,7 @@ class _Room_ListState extends State<Room_List> {
                                         fontSize: 16,
                                         color: (timeRest / 60).toInt() <= 0
                                             ? Colors.red
-                                            : Colors.black)),
+                                            : Colors.black54)),
                               ),
                               Container(
                                 padding: EdgeInsets.all(5),
