@@ -98,7 +98,7 @@ class _Room_ListState extends State<Room_List> {
                         left: 10,
                         right: 10,
                         top: index == 0 ? 10 : 5,
-                        bottom: index == _room.length - 1 ? 10 : 5),
+                        bottom: index == _room.length - 1 ? 100 : 5),
                     child: ListTile(
                       title: Row(children: [
                         Flexible(
@@ -220,13 +220,18 @@ class _Room_ListState extends State<Room_List> {
                                         : (timeRest % 60).toInt().toString() +
                                             "초 남음"
                                     : "시간 만료",
-                                style: TextStyle(fontSize: 16)),
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    color: (timeRest / 60).toInt() <= 0
+                                        ? Colors.red
+                                        : Colors.black)),
                           ),
                           Container(
                             padding: EdgeInsets.all(5),
                             color: CupertinoColors.secondarySystemBackground,
                             child: Text(
-                                room.roomUser.length.toString() +
+                                "현재 인원 : " +
+                                    room.roomUser.length.toString() +
                                     " / " +
                                     room.roomMaxPeople.toString(),
                                 style: TextStyle(fontSize: 16)),

@@ -64,7 +64,12 @@ class _Restaurant_ListState extends State<Restaurant_List> {
               title: Row(children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: Image.memory(
+                  child:
+                      // Image.network(
+                      //   'https://www.kdfnews.com/news/photo/202111/83298_81694_542.png',
+                      //   width: 100,
+                      // ),
+                      Image.memory(
                     base64Decode(utf8.decode(res.resImageDir.data)),
                     width: 100,
                     height: 100,

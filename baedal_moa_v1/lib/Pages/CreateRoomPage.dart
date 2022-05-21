@@ -52,6 +52,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
       myMarker
           .add(Marker(markerId: MarkerId("first"), position: LatLng(lat, lon)));
     });
+    getLocStr();
   }
 
   getLocStr() async {
@@ -60,6 +61,19 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
     setState(() {
       locStr = ("${placeMarks[0].street}");
       print("LocStr : " + locStr);
+    });
+  }
+
+  _handleTap(LatLng tappedPoint) {
+    lat = tappedPoint.latitude;
+    lon = tappedPoint.longitude;
+    getLocStr();
+    setState(() {
+      myMarker = [];
+      myMarker.add(Marker(
+        markerId: MarkerId(tappedPoint.toString()),
+        position: tappedPoint,
+      ));
     });
   }
 
@@ -377,7 +391,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                                         child: Text("loading map..."))
                                     : GoogleMap(
                                         initialCameraPosition: CameraPosition(
-                                            target: myMarker[0].position,
+                                            target: myMarker.first.position,
                                             zoom: 20.0),
                                         markers: Set.from(myMarker),
                                         onTap: _handleTap,
@@ -443,14 +457,4 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
     height: 1,
     color: Colors.grey,
   );
-
-  _handleTap(LatLng tappedPoint) {
-    setState(() {
-      myMarker = [];
-      myMarker.add(Marker(
-        markerId: MarkerId(tappedPoint.toString()),
-        position: tappedPoint,
-      ));
-    });
-  }
 }
