@@ -56,15 +56,17 @@ class _CartPageState extends State<CartPage> {
                     print("<최종 선택 메뉴>");
                     print(
                         "선택한 메뉴 : " + widget.shoppingCart.menusCnt.toString());
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CreateRoomPage(
-                              shoppingCart: widget.shoppingCart,
-                              res: widget.res,
-                              userId: widget.userId)),
-                    );
-                    // 방 만들기 페이지로
+                    if (widget.shoppingCart.menus.isNotEmpty) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CreateRoomPage(
+                                shoppingCart: widget.shoppingCart,
+                                res: widget.res,
+                                userId: widget.userId)),
+                      );
+                      // 방 만들기 페이지로
+                    }
                   },
                   style: ElevatedButton.styleFrom(primary: Colors.deepOrange)),
             )),
@@ -103,55 +105,61 @@ class _CartPageState extends State<CartPage> {
                     child: Image.memory(
                       base64Decode(utf8.decode(m.menuImageDir.data)),
                       width: 100,
+                      height: 70,
                     ),
                   ),
                   Expanded(
                     child: Container(
+                      height: 70,
                       padding: const EdgeInsets.only(left: 15.0),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            children: [
-                              Text(m.menuName),
-                              Expanded(
-                                  child: Container(
-                                alignment: Alignment.topRight,
-                                child: IconButton(
-                                  icon: Icon(
-                                    Icons.close,
-                                    size: 20,
-                                    color: Colors.grey,
+                          Container(
+                            child: Row(
+                              children: [
+                                Text(m.menuName),
+                                Expanded(
+                                    child: Container(
+                                  alignment: Alignment.topRight,
+                                  child: IconButton(
+                                    padding: EdgeInsets.zero,
+                                    constraints: BoxConstraints(),
+                                    icon: Icon(
+                                      Icons.close,
+                                      size: 20,
+                                      color: Colors.grey,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        int cnt = 0;
+                                        widget.shoppingCart.menus.remove(m);
+                                        widget.shoppingCart.menusCnt
+                                            .remove(m.menuName);
+                                        for (Menu m
+                                            in widget.shoppingCart.menus) {
+                                          cnt += widget.shoppingCart
+                                              .menusCnt[m.menuName]!;
+                                        }
+                                        widget.update(cnt);
+                                      });
+                                    },
                                   ),
-                                  onPressed: () {
-                                    setState(() {
-                                      int cnt = 0;
-                                      widget.shoppingCart.menus.remove(m);
-                                      widget.shoppingCart.menusCnt
-                                          .remove(m.menuName);
-                                      for (Menu m
-                                          in widget.shoppingCart.menus) {
-                                        cnt += widget
-                                            .shoppingCart.menusCnt[m.menuName]!;
-                                      }
-                                      widget.update(cnt);
-                                    });
-                                  },
-                                ),
-                              ))
-                            ],
+                                ))
+                              ],
+                            ),
                           ),
                           Row(
                             children: [
                               Text((m.menuPrice * cnt!).toString() + " 원"),
                               Expanded(
                                 child: Container(
-                                  padding: EdgeInsets.only(right: 18),
+                                  padding: EdgeInsets.only(right: 7),
                                   alignment: Alignment.centerRight,
                                   child: Text(
                                     widget.shoppingCart.menusCnt[m.menuName]
                                             .toString() +
-                                        "개",
+                                        " 개",
                                   ),
                                 ),
                               )
@@ -170,62 +178,60 @@ class _CartPageState extends State<CartPage> {
           height: 1,
           color: Colors.grey,
         ),
-        Container(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                alignment: Alignment.center,
-                width: double.infinity,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.add,
-                      color: Colors.deepOrange,
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              alignment: Alignment.center,
+              width: double.infinity,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.add,
+                    color: Colors.deepOrange,
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      "메뉴 추가하기",
+                      style: TextStyle(color: Colors.deepOrange),
                     ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        "메뉴 추가하기",
-                        style: TextStyle(color: Colors.deepOrange),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              Container(
-                height: 1,
-                color: Colors.deepOrange,
+            ),
+            Container(
+              height: 1,
+              color: Colors.deepOrange,
+            ),
+            Container(
+                child: Container(
+              padding: EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  Container(
+                    child: Text(
+                      "총 주문 금액",
+                      style:
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          totalPrice.toString() + " 원",
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                        )),
+                  ),
+                ],
               ),
-              Container(
-                  child: Container(
-                padding: EdgeInsets.all(20),
-                child: Row(
-                  children: [
-                    Container(
-                      child: Text(
-                        "총 주문 금액",
-                        style: TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                            totalPrice.toString() + " 원",
-                            style: TextStyle(
-                                fontSize: 15, fontWeight: FontWeight.bold),
-                          )),
-                    ),
-                  ],
-                ),
-              ))
-            ],
-          ),
+            ))
+          ],
         )
       ],
     );

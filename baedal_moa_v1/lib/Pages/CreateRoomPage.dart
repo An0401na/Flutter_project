@@ -1,5 +1,5 @@
 import 'package:baedal_moa/Model/ShoppingCart.dart';
-import 'package:baedal_moa/Pages/Room_info.dart';
+import 'package:baedal_moa/Pages/RoomInfo.dart';
 import 'package:baedal_moa/Services/Services_Res.dart';
 import 'package:baedal_moa/Services/Services_Room.dart';
 import 'package:baedal_moa/Services/Services_User.dart';
@@ -358,31 +358,19 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Padding(
+                        Container(
                           padding: const EdgeInsets.only(bottom: 20),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                '주소 : ',
-                                style: TextStyle(fontSize: 15),
-                              ),
-                              myMarker.isEmpty
-                                  ? Text(
-                                      'loading map...',
-                                      style: TextStyle(fontSize: 15),
-                                    )
-                                  : Text(
-                                      locStr,
-                                      style: TextStyle(fontSize: 15),
-                                    )
-                            ],
+                          child: Text(
+                            '주소 : ' +
+                                (myMarker.isEmpty ? 'loading map...' : locStr),
+                            style: TextStyle(fontSize: 15),
+                            overflow: TextOverflow.visible,
                           ),
                         ),
                         Container(
                             color: Colors.deepOrange,
                             width: MediaQuery.of(context).size.width * 0.8,
-                            height: MediaQuery.of(context).size.width * 0.6,
+                            height: MediaQuery.of(context).size.width * 0.8,
                             padding: const EdgeInsets.all(3),
                             child: Container(
                                 color: Colors.white,
@@ -440,6 +428,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                         MaterialPageRoute(
                           builder: (context) => Room_info(
                             room: new_room,
+                            userId: widget.userId,
                           ),
                         ));
                   }

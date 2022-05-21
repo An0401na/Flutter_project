@@ -146,21 +146,15 @@ class _KakaoLoginPageState extends State<KakaoLoginPage> {
         ),
         body: SafeArea(
           minimum: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              SizedBox(
-                width: MediaQuery.of(context).size.width,
-                child: CupertinoButton(
-                  child: Text(
-                    '카카오 아이디로 로그인',
-                    style: TextStyle(fontSize: 15, color: Colors.black),
-                  ),
-                  color: Colors.yellow,
-                  onPressed: _loginButtonPressed,
-                ),
-              )
-            ],
+          child: Center(
+            child: CupertinoButton(
+              child: Text(
+                '카카오 아이디로 로그인',
+                style: TextStyle(fontSize: 15, color: Colors.black),
+              ),
+              color: Colors.yellow,
+              onPressed: _loginButtonPressed,
+            ),
           ),
         ));
   }

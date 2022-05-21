@@ -19,12 +19,12 @@ class Services_Menu {
       if (200 == response.statusCode) {
         final List<Menu> Menu1 = menuFromJson(response.body);
         // print("메뉴 바디 : " + response.body);
-        Menu1.insert(
-            0,
-            Menu(
-                menuName: "nothing",
-                menuImageDir: MenuImageDir(data: [], type: ""),
-                menuPrice: 100));
+        // Menu1.insert(
+        //     0,
+        //     Menu(
+        //         menuName: "nothing",
+        //         menuImageDir: MenuImageDir(data: [], type: ""),
+        //         menuPrice: 100));
         return Menu1;
       } else {
         print('Menu empty');

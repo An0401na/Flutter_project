@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:baedal_moa/Model/ShoppingCart.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,9 +11,13 @@ class Menu_info extends StatefulWidget {
   late final Menu menu;
   late final ShoppingCart shoppingCart;
   late final ValueChanged<int> update;
+  late Uint8List image;
 
   Menu_info(
-      {required this.menu, required this.shoppingCart, required this.update});
+      {required this.menu,
+      required this.shoppingCart,
+      required this.update,
+      required this.image});
 
   @override
   State<Menu_info> createState() => _Menu_infoState();
@@ -20,39 +25,40 @@ class Menu_info extends StatefulWidget {
 
 class _Menu_infoState extends State<Menu_info> {
   int menuCnt = 1;
-  late String imageCode;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    imageCode = utf8.decode(widget.menu.menuImageDir.data);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        elevation: 1,
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Container(
-            // color: CupertinoColors.lightBackgroundGray,
-            child: Column(
-              children: [
-                Image.memory(base64Decode(imageCode), width: double.infinity),
-                Padding(
-                  padding: EdgeInsets.only(bottom: 15),
-                  child: Center(
-                    child: Text(
-                      widget.menu.menuName,
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                )
-              ],
+          Hero(
+              tag: widget.menu.menuName,
+              child: Image.memory(
+                widget.image,
+                fit: BoxFit.fill,
+              )),
+          Padding(
+            padding: EdgeInsets.only(bottom: 15),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Text(
+                  widget.menu.menuName,
+                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                ),
+              ),
             ),
           ),
           Container(height: 1, color: Colors.grey),

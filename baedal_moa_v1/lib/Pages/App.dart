@@ -2,9 +2,10 @@ import 'package:baedal_moa/Pages/GoogleMapPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import '../Model/User.dart';
-import 'Restaurant_List.dart';
-import 'Room_List.dart';
+import 'RestaurantList.dart';
+import 'RoomList.dart';
 
 class App extends StatefulWidget {
   int userId;
@@ -167,9 +168,8 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: [SystemUiOverlay.bottom]);
     if (currentPageIndex == 0) {
+      //홈 탭
       return Scaffold(
           appBar: appbarWidget(),
           endDrawer: drawerWidget(context),
@@ -177,11 +177,13 @@ class _AppState extends State<App> {
           floatingActionButton: floatingActionButtonWidget(),
           bottomNavigationBar: bottomNavigationBarWidget());
     } else if (currentPageIndex == 2) {
+      //검색 탭
       return Scaffold(
         body: bodyWidget(context),
         bottomNavigationBar: bottomNavigationBarWidget(),
       );
     } else {
+      //나머지 탭 (찜, 주문내역, 프로필)
       return Scaffold(
           appBar: appbarWidget(),
           body: bodyWidget(context),
