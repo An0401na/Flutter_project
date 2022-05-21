@@ -1,7 +1,11 @@
+import 'dart:math';
+
 import 'package:baedal_moa/Pages/GoogleMapPage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../Model/User.dart';
 import 'RestaurantList.dart';
@@ -61,10 +65,84 @@ class _AppState extends State<App> {
     );
   }
 
+  getCategory() {
+    return InkWell(
+      onTap: () {
+        Fluttertoast.showToast(msg: "카테고리 클릭");
+      },
+      child: Container(
+        width: 100,
+        height: 100,
+        color: Colors.yellow,
+        child:
+            Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+          Icon(
+            Icons.image,
+            size: 70,
+          ),
+          Text("이름")
+        ]),
+      ),
+    );
+  }
+
   Widget drawerWidget(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      child: Drawer(),
+      child: Drawer(
+          child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          title: Text("카테고리"),
+          elevation: 0,
+        ),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [getCategory(), getCategory(), getCategory()],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                getCategory(),
+                getCategory(),
+                getCategory(),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                getCategory(),
+                getCategory(),
+                getCategory(),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                getCategory(),
+                getCategory(),
+                getCategory(),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                getCategory(),
+                getCategory(),
+                getCategory(),
+              ],
+            ),
+          ],
+        ),
+      )),
     );
   }
 

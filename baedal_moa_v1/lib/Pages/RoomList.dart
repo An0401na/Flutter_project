@@ -2,6 +2,7 @@ import 'package:baedal_moa/Pages/RestaurantInfo.dart';
 import 'package:baedal_moa/Services/Services_User.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -34,6 +35,11 @@ class _Room_ListState extends State<Room_List> {
 
   void onRefresh() async {
     print("onRefresh");
+    Fluttertoast.showToast(
+      msg: "방 새로고침 됨",
+      gravity: ToastGravity.CENTER,
+      backgroundColor: Colors.grey,
+    );
     Services_Room.getRooms(widget.userId.toString()).then((Room1) {
       setState(() {
         _room = Room1;

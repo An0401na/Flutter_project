@@ -81,8 +81,7 @@ class _Restaurant_ListState extends State<Restaurant_List> {
                       ),
                     ),
                   ),
-                  Flexible(
-                    fit: FlexFit.tight,
+                  Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(left: 10.0),
                       child: Column(
@@ -118,44 +117,6 @@ class _Restaurant_ListState extends State<Restaurant_List> {
                       ),
                     ),
                   ),
-                  Container(
-                    width: 65,
-                    padding: const EdgeInsets.all(5),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Container(
-                          height: 22,
-                          child: IconButton(
-                            padding: const EdgeInsets.all(0),
-                            constraints: BoxConstraints(),
-                            onPressed: () {
-                              print("찜하기");
-                            },
-                            icon: Icon(
-                              Icons.favorite_border,
-                              color: Colors.deepOrange,
-                            ),
-                            iconSize: 25,
-                          ),
-                        ),
-                        Container(
-                          height: 63,
-                          child: IconButton(
-                              padding: const EdgeInsets.all(0),
-                              constraints: BoxConstraints(),
-                              onPressed: () {
-                                print("위치보기");
-                              },
-                              icon: Icon(
-                                Icons.map_outlined,
-                                color: Colors.deepOrange,
-                              ),
-                              iconSize: 60),
-                        ),
-                      ],
-                    ),
-                  )
                 ]),
               );
             },
