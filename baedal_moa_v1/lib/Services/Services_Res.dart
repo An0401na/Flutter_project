@@ -25,22 +25,22 @@ class Services_Res {
     }
   }
 
-  //안쓰임 레스토랑 아이디 전송
-//   static Future<void> postRest(String resId) async {
-//     try {
-//       String __url = 'http://203.249.22.50:8080/menu';
-//       final _url = Uri.parse(__url);
-//       print("선택한 가게 이름 : " + resId);
-//       http
-//           .post(_url, headers: <String, String>{
-//             'Content-Type': 'application/x-www-form-urlencoded',
-//           }, body: {
-//             "res_id": resId
-//           })
-//           .then((res) => print(json.decode(res.body)))
-//           .catchError((error) => print(error.toString()));
-//     } catch (error) {
-//       print('에러?? : ' + error.toString());
-//     }
-//   }
+  // 안쓰임 레스토랑 아이디 전송
+  static Future<void> postRest(String resId) async {
+    try {
+      String __url = 'http://203.249.22.50:8080/menu';
+      final _url = Uri.parse(__url);
+      print("선택한 가게 이름 : " + resId);
+      http
+          .post(_url, headers: <String, String>{
+            'Content-Type': 'application/x-www-form-urlencoded',
+          }, body: {
+            "res_id": resId
+          })
+          .then((res) => print(json.decode(res.body)))
+          .catchError((error) => print(error.toString()));
+    } catch (error) {
+      print('에러?? : ' + error.toString());
+    }
+  }
 }

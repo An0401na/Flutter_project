@@ -17,18 +17,18 @@ class Services_User {
       print(response.statusCode.toString());
       if (200 == response.statusCode) {
         final List<User> user1 = userFromJson(response.body);
-        user1.insert(
-            0,
-            User(
-                userId: 0,
-                userCash: 0,
-                userLocationX: "0.0",
-                userLocationY: "0.0",
-                userNickname: "a"));
+        // user1.insert(
+        //     0,
+        //     User(
+        //         userId: 0,
+        //         userCash: 0,
+        //         userLocationX: "0.0",
+        //         userLocationY: "0.0",
+        //         userNickname: "a"));
         print("사용자: " + response.body);
         return user1;
       } else {
-        print('Room empty');
+        print('User not found');
         return <User>[]; // 빈 사용자 목록을 반환
       }
     } catch (e) {

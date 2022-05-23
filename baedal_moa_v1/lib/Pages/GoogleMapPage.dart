@@ -148,7 +148,7 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
                             style: BorderStyle.solid,
                             color: Colors.deepOrange)),
                     width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.width * 0.9,
                     child: myMarker.isEmpty
                         ? Center(child: Text("loading map..."))
                         : GoogleMap(

@@ -28,7 +28,7 @@ class Res {
   String resCategory;
   String resInformation;
   int resMinOrderPrice;
-  ResImageDir resImageDir;
+  String resImageDir;
   List<DeliveryFee> deliveryFees;
 
   factory Res.fromJson(Map<String, dynamic> json) => Res(
@@ -38,7 +38,7 @@ class Res {
         resCategory: json["res_category"],
         resInformation: json["res_information"],
         resMinOrderPrice: json["res_min_order_price"],
-        resImageDir: ResImageDir.fromJson(json["res_image_dir"]),
+        resImageDir: json["res_image_dir"],
         deliveryFees: List<DeliveryFee>.from(
             json["delivery_fees"].map((x) => DeliveryFee.fromJson(x))),
       );
@@ -50,7 +50,7 @@ class Res {
         "res_category": resCategory,
         "res_information": resInformation,
         "res_min_order_price": resMinOrderPrice,
-        "res_image_dir": resImageDir.toJson(),
+        "res_image_dir": resImageDir,
         "delivery_fees":
             List<dynamic>.from(deliveryFees.map((x) => x.toJson())),
       };
@@ -73,25 +73,5 @@ class DeliveryFee {
   Map<String, dynamic> toJson() => {
         "del_fee": delFee,
         "del_min_order_price": delMinOrderPrice,
-      };
-}
-
-class ResImageDir {
-  ResImageDir({
-    required this.type,
-    required this.data,
-  });
-
-  String type;
-  List<int> data;
-
-  factory ResImageDir.fromJson(Map<String, dynamic> json) => ResImageDir(
-        type: json["type"],
-        data: List<int>.from(json["data"].map((x) => x)),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "type": type,
-        "data": List<dynamic>.from(data.map((x) => x)),
       };
 }

@@ -12,44 +12,27 @@ String menuToJson(List<Menu> data) =>
 
 class Menu {
   Menu({
+    required this.menuId,
     required this.menuName,
     required this.menuPrice,
     required this.menuImageDir,
   });
-
+  int menuId;
   String menuName;
   int menuPrice;
-  MenuImageDir menuImageDir;
+  String menuImageDir;
 
   factory Menu.fromJson(Map<String, dynamic> json) => Menu(
+        menuId: json["menu_id"],
         menuName: json["menu_name"],
         menuPrice: json["menu_price"],
-        menuImageDir: MenuImageDir.fromJson(json["menu_image_dir"]),
+        menuImageDir: json["menu_image_dir"],
       );
 
   Map<String, dynamic> toJson() => {
+        "menu_id": menuId,
         "menu_name": menuName,
         "menu_price": menuPrice,
-        "menu_image_dir": menuImageDir.toJson(),
-      };
-}
-
-class MenuImageDir {
-  MenuImageDir({
-    required this.type,
-    required this.data,
-  });
-
-  String type;
-  List<int> data;
-
-  factory MenuImageDir.fromJson(Map<String, dynamic> json) => MenuImageDir(
-        type: json["type"],
-        data: List<int>.from(json["data"].map((x) => x)),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "type": type,
-        "data": List<dynamic>.from(data.map((x) => x)),
+        "menu_image_dir": menuImageDir,
       };
 }

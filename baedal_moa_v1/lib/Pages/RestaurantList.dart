@@ -56,7 +56,7 @@ class _Restaurant_ListState extends State<Restaurant_List> {
             itemCount: _res.length,
             itemBuilder: (context, index) {
               Res res = _res[index];
-              Uint8List image = base64Decode(utf8.decode(res.resImageDir.data));
+              String image = res.resImageDir;
               return ListTile(
                 onTap: () {
                   Navigator.push(
@@ -74,7 +74,7 @@ class _Restaurant_ListState extends State<Restaurant_List> {
                     borderRadius: BorderRadius.circular(10),
                     child: Hero(
                       tag: res.resId,
-                      child: Image.memory(
+                      child: Image.network(
                         image,
                         width: 100,
                         height: 100,

@@ -11,7 +11,7 @@ class Menu_info extends StatefulWidget {
   late final Menu menu;
   late final ShoppingCart shoppingCart;
   late final ValueChanged<int> update;
-  late Uint8List image;
+  late String image;
 
   Menu_info(
       {required this.menu,
@@ -45,7 +45,7 @@ class _Menu_infoState extends State<Menu_info> {
         children: [
           Hero(
               tag: widget.menu.menuName,
-              child: Image.memory(
+              child: Image.network(
                 widget.image,
                 fit: BoxFit.fill,
               )),

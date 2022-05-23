@@ -9,6 +9,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 
+import '../Model/Menu.dart';
 import '../Model/Res.dart';
 import '../Model/Room.dart';
 import '../Model/User.dart';
@@ -28,8 +29,7 @@ class CreateRoomPage extends StatefulWidget {
 }
 
 class _CreateRoomPageState extends State<CreateRoomPage> {
-  // late List<User> user = [];
-  late User user;
+  late List<User> userList = [];
   late Room new_room;
   late String locStr;
 
@@ -83,25 +83,29 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
     getLocation();
 
     new_room = Room(
-        roomId: 0,
-        roomName: '',
-        resId: '',
-        hostUserId: '',
-        roomMaxPeople: 0,
-        roomExpireTime: DateTime.now(),
-        roomStartTime: DateTime.now(),
-        roomLocationX: "0",
-        roomLocationY: "0",
-        roomOrderPrice: 0,
-        roomDelFee: 0,
-        roomIsActive: 0,
-        roomUser: []);
+      roomId: 0,
+      roomName: '',
+      resId: 0,
+      hostUserId: '',
+      roomMaxPeople: 0,
+      roomExpireTime: DateTime.now(),
+      roomStartTime: DateTime.now(),
+      roomLocationX: "0",
+      roomLocationY: "0",
+      roomOrderPrice: 0,
+      roomDelFee: 0,
+      roomIsActive: 0,
+      roomMemberMenus: [],
+      roomUserNickname: [],
+      roomUser: [],
+      res: RoomRes(resName: '', resLocation: '', resMinOrderPrice: 0),
+    );
 
-    // Services_User.getUsers(widget.userId.toString()).then((User1) {
-    //   setState(() {
-    //     user = User1;
-    //   });
-    // });
+    Services_User.getUsers(widget.userId.toString()).then((User1) {
+      setState(() {
+        userList = User1;
+      });
+    });
   }
 
   void _plus() {
@@ -124,7 +128,6 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
     if (time_count < 30) {
       setState(() {
         time_count = time_count + 5;
-        ;
       });
     }
   }
@@ -141,7 +144,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
     print(new_room.roomUser);
     new_room.roomId = 0; //db 들어가면 업데이트 됨
     new_room.roomName = room_title.text.toString();
-    new_room.resId = widget.res.resId.toString();
+    new_room.resId = widget.res.resId;
     new_room.hostUserId = widget.userId.toString();
     new_room.roomMaxPeople = member_count.toInt();
     new_room.roomStartTime = widget.curTime;
@@ -151,13 +154,27 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
     new_room.roomOrderPrice = widget.shoppingCart.totalPrice;
     new_room.roomDelFee = widget.res.deliveryFees.last.delFee.toInt();
     new_room.roomIsActive = 1;
+    for (Menu m in widget.shoppingCart.menus) {
+      new_room.roomMemberMenus.add(RoomMemberMenu(
+          menuId: m.menuId, userId: widget.userId, menuPrice: m.menuPrice));
+    }
+    String userName = "nobody";
+    for (User u in userList) {
+      print("유저 아이디 : " + u.userId.toString());
+      if (u.userId == widget.userId) userName = u.userNickname;
+    }
+    new_room.roomUserNickname.add(userName);
     new_room.roomUser.add(widget.userId);
+    new_room.res = RoomRes(
+        resName: widget.res.resName,
+        resLocation: widget.res.resLocation,
+        resMinOrderPrice: widget.res.resMinOrderPrice);
 
     Services_Room.postRoom(new_room);
 
     print("방 번호 : " + new_room.roomId.toString());
     print("방 이름 : " + new_room.roomName);
-    print("가게 번호 : " + new_room.resId);
+    print("가게 번호 : " + new_room.resId.toString());
     print("모집 인원 : " + new_room.roomMaxPeople.toString());
     print("모집 시작 시간 : " + new_room.roomStartTime.toString());
     print("모집 마감 시간 : " + new_room.roomExpireTime.toString());
@@ -165,7 +182,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
     print("배달비 : " + new_room.roomDelFee.toString());
     print("음식 받을 곳(위도) : " + myMarker[0].position.latitude.toString());
     print("음식 받을 곳(경도) : " + myMarker[0].position.longitude.toString());
-    print(new_room.roomUser);
+    print("인원" + new_room.roomUser.toString());
   }
 
   @override
@@ -210,18 +227,18 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                     children: [
                       Row(
                         children: [
-                          const Text('최소주문'),
+                          const Text('최소 주문'),
                           const SizedBox(
-                            width: 5,
+                            width: 10,
                           ),
                           Text(widget.res.resMinOrderPrice.toString() + ' 원'),
                         ],
                       ),
                       Row(
                         children: [
-                          const Text('배달요금'),
+                          const Text('배달 요금'),
                           const SizedBox(
-                            width: 5,
+                            width: 10,
                           ),
                           Text(
                             widget.res.deliveryFees[0].delFee.toString() +
@@ -232,12 +249,20 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                           ),
                         ],
                       ),
-                      // Row(
-                      //   children: const [
-                      //     Text('배달시간'),
-                      //     Text('  ' + '20분 ~ 30분'),
-                      //   ],
-                      // ),
+                      Row(
+                        children: [
+                          const Text('가게 위치'),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: Text(
+                              widget.res.resLocation,
+                              overflow: TextOverflow.visible,
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   )
                 ],

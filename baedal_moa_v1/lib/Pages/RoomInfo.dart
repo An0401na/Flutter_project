@@ -71,7 +71,7 @@ class _Room_infoState extends State<Room_info> {
                         height: 5,
                       ),
                       Text(
-                        "가게 이름",
+                        widget.room.res.resName,
                         style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.w600),
                       ),
@@ -85,28 +85,21 @@ class _Room_infoState extends State<Room_info> {
                     children: [
                       Row(
                         children: [
-                          const Text('최소주문'),
+                          const Text('최소 주문'),
                           const SizedBox(
-                            width: 5,
+                            width: 10,
                           ),
-                          Text(
-                              // widget.res.resMinOrderPrice.toString() +
+                          Text(widget.room.res.resMinOrderPrice.toString() +
                               ' 원'),
                         ],
                       ),
                       Row(
                         children: [
-                          const Text('배달요금'),
+                          const Text('가게 위치'),
                           const SizedBox(
-                            width: 5,
+                            width: 10,
                           ),
-                          Text(
-                            // widget.res.deliveryFees.first.delFee.toString() +
-                            //     ' ~ ' +
-                            //     widget.res.deliveryFees.last.delFee.toString() +
-                            ' 원',
-                            style: const TextStyle(color: Colors.deepOrange),
-                          ),
+                          Text(widget.room.res.resLocation),
                         ],
                       ),
                       SizedBox(
@@ -252,7 +245,7 @@ class _Room_infoState extends State<Room_info> {
   MemberList() {
     return Column(
       children: [
-        for (int id in widget.room.roomUser)
+        for (String name in widget.room.roomUserNickname)
           Container(
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
@@ -262,11 +255,7 @@ class _Room_infoState extends State<Room_info> {
             padding: EdgeInsets.all(10),
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                      padding: EdgeInsets.all(10), child: Text(id.toString())),
-                  Text("주문 금액 : " + id.toString() + " 원 ")
-                ]),
+                children: [Text(name), Text("주문 금액 : " + name + " 원 ")]),
           ),
       ],
     );

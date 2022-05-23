@@ -102,8 +102,8 @@ class _CartPageState extends State<CartPage> {
                 child: Row(children: [
                   ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(10)),
-                    child: Image.memory(
-                      base64Decode(utf8.decode(m.menuImageDir.data)),
+                    child: Image.network(
+                      m.menuImageDir,
                       width: 100,
                       height: 70,
                     ),

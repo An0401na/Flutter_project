@@ -16,7 +16,7 @@ import 'CartPage.dart';
 class Restaurant_info extends StatefulWidget {
   Res res;
   int userId;
-  Uint8List image;
+  String image;
   Restaurant_info(
       {required this.res, required this.userId, required this.image});
 
@@ -52,7 +52,7 @@ class _Restaurant_infoState extends State<Restaurant_info> {
     return FloatingActionButton(
       child: Badge(
           showBadge: menuCnt == 0 ? false : true,
-          position: BadgePosition.topEnd(top: -10, end: -8),
+          position: BadgePosition.topEnd(top: -10, end: -5),
           badgeContent: Text(
             menuCnt.toString(),
             style: TextStyle(color: Colors.white),
@@ -109,7 +109,7 @@ class _Restaurant_infoState extends State<Restaurant_info> {
                 children: [
                   Hero(
                     tag: widget.res.resId,
-                    child: Image.memory(
+                    child: Image.network(
                       widget.image,
                       fit: BoxFit.fill,
                     ),
@@ -235,7 +235,7 @@ class _Restaurant_infoState extends State<Restaurant_info> {
   }
 
   MenuList() {
-    late Uint8List image;
+    late String menuImage;
     return Column(
       children: [
         for (Menu m in _menu)
@@ -256,7 +256,7 @@ class _Restaurant_infoState extends State<Restaurant_info> {
                                 menu: m,
                                 shoppingCart: shoppingCart,
                                 update: update,
-                                image: image,
+                                image: menuImage,
                               )));
                 },
                 child: Container(
@@ -266,9 +266,8 @@ class _Restaurant_infoState extends State<Restaurant_info> {
                         borderRadius: BorderRadius.circular(10),
                         child: Hero(
                           tag: m.menuName,
-                          child: Image.memory(
-                            image =
-                                base64Decode(utf8.decode(m.menuImageDir.data)),
+                          child: Image.network(
+                            menuImage = m.menuImageDir,
                             width: 100,
                           ),
                         )),

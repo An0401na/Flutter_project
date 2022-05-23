@@ -123,7 +123,7 @@ class _Room_ListState extends State<Room_List> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      room.resId,
+                                      room.res.resName.toString(),
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
