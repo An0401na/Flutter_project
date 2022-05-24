@@ -1,10 +1,16 @@
+import 'dart:convert';
+
+import 'package:baedal_moa/Services/Services_ShoppingCart.dart';
+import 'package:baedal_moa/Services/Services_User.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 
+import '../Model/AppUser.dart';
 import '../Model/Room.dart';
+import 'App.dart';
 
 class Room_info extends StatefulWidget {
   late final Room room;
@@ -18,6 +24,8 @@ class Room_info extends StatefulWidget {
 
 class _Room_infoState extends State<Room_info> {
   late String locStr;
+  late List<AppUser> userList;
+  late String userLoc;
   List<Marker> myMarker = [];
 
   @override
@@ -25,6 +33,12 @@ class _Room_infoState extends State<Room_info> {
     // TODO: implement initState
     super.initState();
     getLocation();
+
+    Services_User.getUsers(widget.userId.toString()).then((User1) {
+      setState(() {
+        userList = User1;
+      });
+    });
   }
 
   getLocation() async {
@@ -43,6 +57,15 @@ class _Room_infoState extends State<Room_info> {
     });
   }
 
+  getUserLocation() async {
+    double lat = double.parse(userList[0].userLocationX);
+    double lon = double.parse(userList[0].userLocationY);
+
+    final placeMarks =
+        await placemarkFromCoordinates(lat, lon, localeIdentifier: "ko_KR");
+    userLoc = "${placeMarks[0].thoroughfare} ${placeMarks[0].subThoroughfare}";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,133 +74,166 @@ class _Room_infoState extends State<Room_info> {
         title: Center(child: Text(widget.room.roomName)),
         elevation: 1,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.only(left: 10, top: 10),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: WillPopScope(
+              onWillPop: onBackKey,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        '가게 정보',
-                        style: TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.w600),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        widget.room.res.resName,
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.w600),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          const Text('최소 주문'),
-                          const SizedBox(
-                            width: 10,
+                  Container(
+                    padding: EdgeInsets.only(left: 10, top: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              '가게 정보',
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.w600),
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              widget.room.res.resName,
+                              style: const TextStyle(
+                                  fontSize: 30, fontWeight: FontWeight.w600),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Text(
+                                  '최소 주문',
+                                  style: TextStyle(fontSize: 15),
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                  widget.room.res.resMinOrderPrice.toString() +
+                                      ' 원',
+                                  style: TextStyle(fontSize: 15),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  '가게 위치',
+                                  style: TextStyle(fontSize: 15),
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    widget.room.res.resLocation,
+                                    style: TextStyle(fontSize: 15),
+                                    overflow: TextOverflow.visible,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  ), //가게 정보
+                  Container(
+                    color: CupertinoColors.secondarySystemBackground,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 10, left: 10.0, bottom: 10),
+                          child: Text(
+                            '음식 받을 곳',
+                            style: TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.w600),
                           ),
-                          Text(widget.room.res.resMinOrderPrice.toString() +
-                              ' 원'),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          const Text('가게 위치'),
-                          const SizedBox(
-                            width: 10,
+                        ),
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(20),
+                          child: Container(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Padding(
+                                    padding: const EdgeInsets.only(bottom: 20),
+                                    child: Text(
+                                      (myMarker.isEmpty
+                                          ? 'loading map...'
+                                          : locStr),
+                                      style: TextStyle(fontSize: 20),
+                                      overflow: TextOverflow.visible,
+                                    )),
+                                Container(
+                                    color: Colors.deepOrange,
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.8,
+                                    height:
+                                        MediaQuery.of(context).size.width * 0.8,
+                                    padding: const EdgeInsets.all(3),
+                                    child: Container(
+                                        color: Colors.white,
+                                        child: myMarker.isEmpty
+                                            ? const Center(
+                                                child: Text("loading map..."))
+                                            : GoogleMap(
+                                                initialCameraPosition:
+                                                    CameraPosition(
+                                                        target: myMarker[0]
+                                                            .position,
+                                                        zoom: 18.0),
+                                                markers: Set.from(myMarker),
+                                              ))),
+                              ],
+                            ),
                           ),
-                          Text(widget.room.res.resLocation),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      )
-                    ],
-                  )
-                ],
-              ),
-            ), //가게 정보
-            Container(
-              color: CupertinoColors.secondarySystemBackground,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(top: 10, left: 10.0, bottom: 10),
-                    child: Text(
-                      '음식 받을 곳',
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                        ),
+                      ],
                     ),
                   ),
                   Container(
                     width: double.infinity,
-                    padding: EdgeInsets.all(20),
-                    child: Container(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Padding(
-                              padding: const EdgeInsets.only(bottom: 20),
-                              child: Text(
-                                '주소 : ' +
-                                    (myMarker.isEmpty
-                                        ? 'loading map...'
-                                        : locStr),
-                                style: TextStyle(fontSize: 15),
-                                overflow: TextOverflow.visible,
-                              )),
-                          Container(
-                              color: Colors.deepOrange,
-                              width: MediaQuery.of(context).size.width * 0.8,
-                              height: MediaQuery.of(context).size.width * 0.8,
-                              padding: const EdgeInsets.all(3),
-                              child: Container(
-                                  color: Colors.white,
-                                  child: myMarker.isEmpty
-                                      ? const Center(
-                                          child: Text("loading map..."))
-                                      : GoogleMap(
-                                          initialCameraPosition: CameraPosition(
-                                              target: myMarker[0].position,
-                                              zoom: 18.0),
-                                          markers: Set.from(myMarker),
-                                        ))),
-                        ],
-                      ),
+                    padding: const EdgeInsets.only(
+                      top: 10,
+                      left: 10.0,
+                    ),
+                    child: Text(
+                      '현재 멤버',
+                      style:
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                     ),
                   ),
+                  MemberList(),
                 ],
               ),
             ),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.only(
-                top: 10,
-                left: 10.0,
-              ),
-              child: Text(
-                '현재 멤버',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-              ),
-            ),
-            MemberList(),
-          ],
-        ),
+          ),
+          Container(
+            width: 100,
+            height: 50,
+            color: Colors.yellow,
+          )
+        ],
+        // child:
       ),
       bottomNavigationBar: BottomAppBar(
         child: Container(
@@ -229,7 +285,7 @@ class _Room_infoState extends State<Room_info> {
                       width: 5,
                     ),
                     Text(
-                      widget.userId.toString(),
+                      userList[0].userCash.toString(),
                       style: TextStyle(color: Colors.deepOrange),
                     )
                   ],
@@ -243,9 +299,19 @@ class _Room_infoState extends State<Room_info> {
   }
 
   MemberList() {
+    List<int> userTotalPrice = [];
+    for (int userId in widget.room.roomUser) {
+      int i = 0;
+      for (RoomMemberMenu m in widget.room.roomMemberMenus) {
+        if (m.userId == userId) {
+          i += m.menuCnt * m.menuPrice;
+        }
+      }
+      userTotalPrice.add(i);
+    }
     return Column(
       children: [
-        for (String name in widget.room.roomUserNickname)
+        for (int i = 0; i < widget.room.roomUser.length; i++)
           Container(
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
@@ -255,9 +321,61 @@ class _Room_infoState extends State<Room_info> {
             padding: EdgeInsets.all(10),
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [Text(name), Text("주문 금액 : " + " 원 ")]),
+                children: [
+                  Row(
+                    children: [
+                      Image.asset(
+                        "assets/images/user.png",
+                        width: 50,
+                        height: 50,
+                      ),
+                      Text(
+                        widget.room.roomUserNickname[i],
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    "주문 금액 : " + userTotalPrice[i].toString() + " 원 ",
+                    style: TextStyle(fontSize: 20),
+                  )
+                ]),
           ),
       ],
     );
+  }
+
+  Future<bool> onBackKey() async {
+    getUserLocation();
+    return await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("방을 나가시겠습니까?"),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              App(userId: widget.userId, curLoc: userLoc),
+                        ));
+                  },
+                  child: Text(
+                    "확인",
+                    style: TextStyle(color: Colors.deepOrange),
+                  )),
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context, false);
+                  },
+                  child: Text(
+                    "취소",
+                    style: TextStyle(color: Colors.deepOrange),
+                  )),
+            ],
+          );
+        });
   }
 }

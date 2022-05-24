@@ -65,22 +65,21 @@ class _AppState extends State<App> {
     );
   }
 
-  getCategory() {
+  getCategory(String name) {
     return InkWell(
       onTap: () {
         Fluttertoast.showToast(msg: "카테고리 클릭");
       },
       child: Container(
         width: 100,
-        height: 100,
-        color: Colors.yellow,
+        height: 150,
         child:
             Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           Icon(
             Icons.image,
-            size: 70,
+            size: 100,
           ),
-          Text("이름")
+          Text(name)
         ]),
       ),
     );
@@ -106,40 +105,28 @@ class _AppState extends State<App> {
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [getCategory(), getCategory(), getCategory()],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                getCategory(),
-                getCategory(),
-                getCategory(),
+                getCategory("전체 보기"),
+                getCategory("치킨"),
+                getCategory("피자/양식"),
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                getCategory(),
-                getCategory(),
-                getCategory(),
+                getCategory("중국집"),
+                getCategory("한식"),
+                getCategory("일식/돈까스"),
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                getCategory(),
-                getCategory(),
-                getCategory(),
+                getCategory("족발/보쌈"),
+                getCategory("분식"),
+                getCategory("카페/디저트"),
               ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                getCategory(),
-                getCategory(),
-                getCategory(),
-              ],
-            ),
+            )
           ],
         ),
       )),
@@ -248,24 +235,61 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     if (currentPageIndex == 0) {
       //홈 탭
-      return Scaffold(
-          appBar: appbarWidget(),
-          endDrawer: drawerWidget(context),
-          body: bodyWidget(context),
-          floatingActionButton: floatingActionButtonWidget(),
-          bottomNavigationBar: bottomNavigationBarWidget());
+      return WillPopScope(
+        onWillPop: onBackKey,
+        child: Scaffold(
+            appBar: appbarWidget(),
+            endDrawer: drawerWidget(context),
+            body: bodyWidget(context),
+            floatingActionButton: floatingActionButtonWidget(),
+            bottomNavigationBar: bottomNavigationBarWidget()),
+      );
     } else if (currentPageIndex == 2) {
       //검색 탭
-      return Scaffold(
-        body: bodyWidget(context),
-        bottomNavigationBar: bottomNavigationBarWidget(),
+      return WillPopScope(
+        onWillPop: onBackKey,
+        child: Scaffold(
+          body: bodyWidget(context),
+          bottomNavigationBar: bottomNavigationBarWidget(),
+        ),
       );
     } else {
       //나머지 탭 (찜, 주문내역, 프로필)
-      return Scaffold(
-          appBar: appbarWidget(),
-          body: bodyWidget(context),
-          bottomNavigationBar: bottomNavigationBarWidget());
+      return WillPopScope(
+        onWillPop: onBackKey,
+        child: Scaffold(
+            appBar: appbarWidget(),
+            body: bodyWidget(context),
+            bottomNavigationBar: bottomNavigationBarWidget()),
+      );
     }
+  }
+
+  Future<bool> onBackKey() async {
+    return await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("앱을 종료하시겠습니까?"),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    SystemNavigator.pop();
+                  },
+                  child: Text(
+                    "확인",
+                    style: TextStyle(color: Colors.deepOrange),
+                  )),
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context, false);
+                  },
+                  child: Text(
+                    "취소",
+                    style: TextStyle(color: Colors.deepOrange),
+                  )),
+            ],
+          );
+        });
   }
 }

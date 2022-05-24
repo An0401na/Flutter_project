@@ -19,7 +19,6 @@ class CreateRoomPage extends StatefulWidget {
   Res res;
   int userId;
   ShoppingCart shoppingCart;
-  DateTime curTime = DateTime.now();
 
   CreateRoomPage(
       {required this.shoppingCart, required this.res, required this.userId});
@@ -32,6 +31,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
   late List<AppUser> userList = [];
   late Room new_room;
   late String locStr = "";
+  late DateTime curTime;
 
   int member_count = 2; //모집인원 저장하는 변수
   int time_count = 5; //모집시간 저장하는 변수
@@ -141,14 +141,15 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
   }
 
   void printn() {
+    curTime = DateTime.now();
     print(new_room.roomUser);
     new_room.roomId = 0; //db 들어가면 업데이트 됨
     new_room.roomName = room_title.text.toString();
     new_room.resId = widget.res.resId;
     new_room.hostUserId = widget.userId.toString();
     new_room.roomMaxPeople = member_count.toInt();
-    new_room.roomStartTime = widget.curTime;
-    new_room.roomExpireTime = widget.curTime.add(Duration(minutes: time_count));
+    new_room.roomStartTime = curTime;
+    new_room.roomExpireTime = curTime.add(Duration(minutes: time_count));
     new_room.roomLocationX = myMarker[0].position.latitude.toString();
     new_room.roomLocationY = myMarker[0].position.longitude.toString();
     new_room.roomOrderPrice = widget.shoppingCart.totalPrice;
@@ -160,7 +161,6 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
           menuPrice: m.menuPrice,
           menuCnt: widget.shoppingCart.menusCnt[m.menuName]!));
     }
-
     String userName = "nobody";
     userName = userList[0].userNickname;
     new_room.roomUserNickname.add(userName);

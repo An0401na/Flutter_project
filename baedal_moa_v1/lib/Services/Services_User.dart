@@ -16,7 +16,6 @@ class Services_User {
       });
       print("getUsers의 상태코드 : " + response.statusCode.toString());
       if (200 == response.statusCode) {
-        print("asdgaefaefaf");
         final List<AppUser> user1 = userFromJson(response.body);
         print("사용자: " + response.body);
         return user1;

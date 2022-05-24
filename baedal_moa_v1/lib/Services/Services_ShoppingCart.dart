@@ -5,7 +5,7 @@ import '../Model/ShoppingCart.dart';
 class Services_ShoppingCart {
   static Future<void> postShoppingCart(ShoppingCart shoppingCart) async {
     try {
-      String __url = 'http://203.249.22.50:8080/shoppingcart';
+      String __url = 'http://203.249.22.50:8080/join';
       http.post(Uri.parse(__url), headers: <String, String>{
         'Content-Type': 'application/x-www-form-urlencoded',
       }, body: {
