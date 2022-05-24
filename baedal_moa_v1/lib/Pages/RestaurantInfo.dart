@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../Model/Res.dart';
 import '../Model/Menu.dart';
-import '../Model/User.dart';
+import '../Model/AppUser.dart';
 import '../Services/Services_Menu.dart';
 import 'CartPage.dart';
 
@@ -33,7 +33,11 @@ class _Restaurant_infoState extends State<Restaurant_info> {
   void initState() {
     super.initState();
     shoppingCart = ShoppingCart(
-        resId: widget.res.resId, menus: [], menusCnt: {}, totalPrice: 0);
+        userId: widget.userId,
+        resId: widget.res.resId,
+        menus: [],
+        menusCnt: {},
+        totalPrice: 0);
     Services_Menu.getMenus(widget.res.resId.toString()).then((Menu1) {
       setState(() {
         _menu = Menu1;

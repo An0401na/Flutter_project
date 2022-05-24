@@ -7,7 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
-import '../Model/User.dart';
+import '../Model/AppUser.dart';
 import 'App.dart';
 
 class GoogleMapPage extends StatefulWidget {

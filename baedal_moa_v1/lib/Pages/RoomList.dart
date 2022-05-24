@@ -8,7 +8,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../Model/Room.dart';
-import '../Model/User.dart';
+import '../Model/AppUser.dart';
 import '../Services/Services_Room.dart';
 import 'RoomInfo.dart';
 import 'dart:async';
@@ -25,6 +25,7 @@ class Room_List extends StatefulWidget {
 class _Room_ListState extends State<Room_List> {
   @override
   late List<Room> _room = [];
+  late List<AppUser> _user = [];
   late Timer timer;
   DateTime curTime = DateTime.now();
   late String locStr;
@@ -54,6 +55,11 @@ class _Room_ListState extends State<Room_List> {
     Services_Room.getRooms(widget.userId.toString()).then((Room1) {
       setState(() {
         _room = Room1;
+      });
+    });
+    Services_User.getUsers(widget.userId.toString()).then((User1) {
+      setState(() {
+        _user = User1;
       });
     });
     timer = Timer.periodic(Duration(seconds: 1), (timer) {

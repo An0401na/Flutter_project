@@ -4,6 +4,10 @@
 
 import 'dart:convert';
 
+import 'package:baedal_moa/Pages/App.dart';
+
+import 'AppUser.dart';
+
 List<Room> roomFromJson(String str) =>
     List<Room>.from(json.decode(str).map((x) => Room.fromJson(x)));
 
@@ -45,6 +49,7 @@ class Room {
   List<RoomMemberMenu> roomMemberMenus;
   List<String> roomUserNickname;
   List<int> roomUser;
+
   RoomRes res;
 
   factory Room.fromJson(Map<String, dynamic> json) => Room(
@@ -115,25 +120,27 @@ class RoomRes {
 }
 
 class RoomMemberMenu {
-  RoomMemberMenu({
-    required this.menuId,
-    required this.userId,
-    required this.menuPrice,
-  });
+  RoomMemberMenu(
+      {required this.menuId,
+      required this.userId,
+      required this.menuPrice,
+      required this.menuCnt});
 
   int menuId;
   int userId;
   int menuPrice;
+  int menuCnt;
 
   factory RoomMemberMenu.fromJson(Map<String, dynamic> json) => RoomMemberMenu(
-        menuId: json["menu_id"],
-        userId: json["user_id"],
-        menuPrice: json["menu_price"],
-      );
+      menuId: json["menu_id"],
+      userId: json["user_id"],
+      menuPrice: json["menu_price"],
+      menuCnt: json["menu_count"]);
 
   Map<String, dynamic> toJson() => {
         "menu_id": menuId,
         "user_id": userId,
         "menu_price": menuPrice,
+        "menu_count": menuCnt
       };
 }

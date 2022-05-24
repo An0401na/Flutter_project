@@ -255,7 +255,7 @@ class _Room_infoState extends State<Room_info> {
             padding: EdgeInsets.all(10),
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [Text(name), Text("주문 금액 : " + name + " 원 ")]),
+                children: [Text(name), Text("주문 금액 : " + " 원 ")]),
           ),
       ],
     );

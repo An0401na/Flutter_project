@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import '../Model/User.dart';
+import '../Model/AppUser.dart';
 import 'RestaurantList.dart';
 import 'RoomList.dart';
 

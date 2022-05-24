@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:baedal_moa/Model/User.dart';
+import 'package:baedal_moa/Model/AppUser.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../Model/Res.dart';

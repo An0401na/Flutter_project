@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 
 import '../Model/Menu.dart';
 import '../Model/Res.dart';
-import '../Model/User.dart';
+import '../Model/AppUser.dart';
 
 class CartPage extends StatefulWidget {
   late Res res;
