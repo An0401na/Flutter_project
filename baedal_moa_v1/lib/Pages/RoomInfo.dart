@@ -28,10 +28,10 @@ class Room_info extends StatefulWidget {
 class _Room_infoState extends State<Room_info> {
   late String locStr;
   late List<AppUser> userList;
+  late List<Room> roomList;
   late String userLoc;
   late Timer timer;
   late int timeRest;
-  late bool isActive;
   DateTime curTime = DateTime.now();
   List<Marker> myMarker = [];
   int j = 0;
@@ -41,27 +41,26 @@ class _Room_infoState extends State<Room_info> {
     // TODO: implement initState
     super.initState();
     getLocation();
-    getIsActive();
     Services_User.getUsers(widget.userId.toString()).then((User1) {
       setState(() {
         userList = User1;
       });
     });
-    // timer = Timer.periodic(Duration(seconds: 1), (timer) {
-    //   setState(() {
-    //     curTime = DateTime.now();
-    //   });
-    // });
-  }
-
-  void getIsActive() {
-    if ((widget.room.roomExpireTime.difference(curTime).inSeconds) < 0) {
-      isActive = false;
-      // Services_Room.expireRoom(widget.room);
-    } else {
-      isActive = true;
-    }
-    print(widget.room.roomName + " 방은 시간이 만료되었습니다.  " + isActive.toString());
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        curTime = DateTime.now();
+        Services_Room.getRooms(widget.userId.toString()).then((Room1) {
+          roomList = Room1;
+        });
+        for (Room r in roomList) {
+          if (r.roomId == widget.room.roomId) widget.room = r;
+        }
+        if (timeRest < 0) {
+          Services_Room.expireRoom(widget.room);
+          timer.cancel();
+        }
+      });
+    });
   }
 
   void dispose() {
@@ -316,9 +315,11 @@ class _Room_infoState extends State<Room_info> {
                                 .difference(curTime)
                                 .inSeconds) >
                             0
-                        ? (timeRest / 60).toInt() > 0
-                            ? (timeRest / 60).toInt().toString() + "분 남음"
-                            : (timeRest % 60).toInt().toString() + "초 남음"
+                        ? (timeRest / 60).toInt().toString() +
+                            "분 " +
+                            (timeRest % 60).toInt().toString() +
+                            "초 " +
+                            "남음"
                         : "시간 만료",
                     style: TextStyle(fontSize: 20),
                   ),
@@ -400,6 +401,7 @@ class _Room_infoState extends State<Room_info> {
             actions: [
               TextButton(
                   onPressed: () {
+                    // DB에 있는 방에도 멤버 삭제
                     Navigator.push(
                         context,
                         MaterialPageRoute(

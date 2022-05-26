@@ -134,9 +134,9 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
               fontWeight: FontWeight.bold),
           elevation: 1,
         ),
-        body: SingleChildScrollView(
+        body: Center(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(30.0),

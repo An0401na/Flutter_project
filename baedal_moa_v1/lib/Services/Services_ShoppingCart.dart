@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:baedal_moa/Model/Room.dart';
 import 'package:baedal_moa/Model/ShoppingCart.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../Model/ShoppingCart.dart';
 
@@ -13,7 +14,8 @@ class Services_ShoppingCart {
       http.post(Uri.parse(__url), headers: <String, String>{
         'Content-Type': 'application/x-www-form-urlencoded',
       }, body: {
-        "roomId": roomId,
+        "room_id": roomId,
+        "user_id": roomMemberMenu[0].userId.toString(),
         "room_member_menus": jsonEncode(roomMemberMenu)
       }).then((res) {
         print("postShoppingCart의 상태 코드 : " + res.statusCode.toString());

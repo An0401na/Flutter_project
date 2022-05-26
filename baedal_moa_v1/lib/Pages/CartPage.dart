@@ -6,6 +6,7 @@ import 'package:baedal_moa/Pages/CreateRoomPage.dart';
 import 'package:baedal_moa/Pages/RoomInfo.dart';
 import 'package:baedal_moa/Services/Services_Room.dart';
 import 'package:baedal_moa/Services/Services_ShoppingCart.dart';
+import 'package:baedal_moa/Services/Services_User.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -16,12 +17,10 @@ import '../Model/AppUser.dart';
 class CartPage extends StatefulWidget {
   late Res res;
   late ShoppingCart shoppingCart;
-  late List<RoomMemberMenu> roomMemberMenu = [];
   late final ValueChanged<int> update;
   late int userId;
   bool isHost;
   int roomId;
-
   CartPage(
       {required this.roomId,
       required this.res,
@@ -35,16 +34,20 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  late RoomMemberMenu new_rmm;
   late List<Room> _room;
+  late List<AppUser> _userList;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    new_rmm = RoomMemberMenu(userId: 0, menuId: 0, menuPrice: 0, menuCount: 0);
     Services_Room.getRooms(widget.userId.toString()).then((Room1) {
       setState(() {
         _room = Room1;
+      });
+    });
+    Services_User.getUsers(widget.userId.toString()).then((User1) {
+      setState(() {
+        _userList = User1;
       });
     });
   }
@@ -93,17 +96,25 @@ class _CartPageState extends State<CartPage> {
                         !widget.isHost) {
                       for (Room room in _room) {
                         if (widget.roomId == room.roomId) {
-                          int i = widget.shoppingCart.menus.length;
+                          List<RoomMemberMenu> menuList = [];
                           for (Menu m in widget.shoppingCart.menus) {
-                            widget.roomMemberMenu.add(RoomMemberMenu(
+                            menuList.add(RoomMemberMenu(
                                 menuId: m.menuId,
                                 userId: widget.userId,
                                 menuPrice: m.menuPrice,
                                 menuCount:
                                     widget.shoppingCart.menusCnt[m.menuName]!));
-                            print(jsonEncode(widget.roomMemberMenu).toString());
                           }
-
+                          room.roomMemberMenus.add(menuList);
+                          room.roomUser.add(RoomUser(
+                              userId: widget.userId,
+                              userNickname: _userList[0].userNickname,
+                              userLocationX: _userList[0].userLocationX,
+                              userLocationY: _userList[0].userLocationY,
+                              userCash: _userList[0].userCash));
+                          print(jsonEncode(room.roomMemberMenus));
+                          Services_ShoppingCart.postShoppingCart(
+                              menuList, widget.roomId.toString());
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -114,8 +125,6 @@ class _CartPageState extends State<CartPage> {
                                       isHost: widget.isHost,
                                     )),
                           );
-                          Services_ShoppingCart.postShoppingCart(
-                              widget.roomMemberMenu, widget.roomId.toString());
                         }
                       }
                     }

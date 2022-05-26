@@ -75,9 +75,10 @@ class _AppState extends State<App> {
         height: 150,
         child:
             Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-          Icon(
-            Icons.image,
-            size: 100,
+          Image.asset(
+            "assets/images/${name}.png",
+            width: 100,
+            height: 100,
           ),
           Text(name)
         ]),
@@ -106,7 +107,7 @@ class _AppState extends State<App> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                getCategory("전체 보기"),
+                getCategory("전체보기"),
                 getCategory("치킨"),
                 getCategory("피자/양식"),
               ],

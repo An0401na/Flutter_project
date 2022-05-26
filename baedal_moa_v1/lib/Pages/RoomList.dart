@@ -327,11 +327,9 @@ class _Room_ListState extends State<Room_List> {
                                           Navigator.pop(context);
                                           for (Res res in _res) {
                                             if (room.resId == res.resId) {
-                                              print(res.resId.toString());
                                               Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
-                                                      //이것때문에 room 객체에서 roomRes를 받아오는게 아니라 Res 자체를 다 받아와야할듯..
                                                       builder: (context) =>
                                                           Restaurant_info(
                                                             roomId: room.roomId,
@@ -341,12 +339,7 @@ class _Room_ListState extends State<Room_List> {
                                                             image:
                                                                 res.resImageDir,
                                                             isHost: false,
-                                                          )
-                                                      // Room_info(
-                                                      //   room: room,
-                                                      //   userId: widget.userId,
-                                                      // )
-                                                      ));
+                                                          )));
                                             }
                                           }
                                         })

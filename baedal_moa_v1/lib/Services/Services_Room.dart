@@ -65,7 +65,6 @@ class Services_Room {
         print("room_expireRoom의 상태 코드 : " + res.statusCode.toString());
       }).catchError(
           (error) => print("room_expireRoom 에러 : " + error.toString()));
-      print("시간 만료된 방 숨김");
     } catch (error) {
       print('expirRoom 에러 : ' + error.toString());
     }

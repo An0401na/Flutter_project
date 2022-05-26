@@ -96,10 +96,10 @@ class _Restaurant_infoState extends State<Restaurant_info> {
     double deviceWidth = MediaQuery.of(context).size.width;
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: [SystemUiOverlay.bottom]);
-    if (widget.isHost == true) {
-      print("방장입니다.");
+    if (widget.isHost) {
+      print("방 새로 만드는 경우");
     } else {
-      print("참여자 입니다.");
+      print("기존 방 참여");
     }
     return WillPopScope(
       onWillPop: shoppingCart.menus.isNotEmpty
