@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:baedal_moa/Services/Services_Room.dart';
 import 'package:baedal_moa/Services/Services_ShoppingCart.dart';
 import 'package:baedal_moa/Services/Services_User.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,8 +17,9 @@ import 'App.dart';
 class Room_info extends StatefulWidget {
   late final Room room;
   late int userId;
+  bool isHost;
 
-  Room_info({required this.room, required this.userId});
+  Room_info({required this.isHost, required this.room, required this.userId});
 
   @override
   State<Room_info> createState() => _Room_infoState();
@@ -26,19 +29,44 @@ class _Room_infoState extends State<Room_info> {
   late String locStr;
   late List<AppUser> userList;
   late String userLoc;
+  late Timer timer;
+  late int timeRest;
+  late bool isActive;
+  DateTime curTime = DateTime.now();
   List<Marker> myMarker = [];
+  int j = 0;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getLocation();
-
+    getIsActive();
     Services_User.getUsers(widget.userId.toString()).then((User1) {
       setState(() {
         userList = User1;
       });
     });
+    // timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    //   setState(() {
+    //     curTime = DateTime.now();
+    //   });
+    // });
+  }
+
+  void getIsActive() {
+    if ((widget.room.roomExpireTime.difference(curTime).inSeconds) < 0) {
+      isActive = false;
+      // Services_Room.expireRoom(widget.room);
+    } else {
+      isActive = true;
+    }
+    print(widget.room.roomName + " 방은 시간이 만료되었습니다.  " + isActive.toString());
+  }
+
+  void dispose() {
+    super.dispose();
+    timer.cancel();
   }
 
   getLocation() async {
@@ -64,6 +92,51 @@ class _Room_infoState extends State<Room_info> {
     final placeMarks =
         await placemarkFromCoordinates(lat, lon, localeIdentifier: "ko_KR");
     userLoc = "${placeMarks[0].thoroughfare} ${placeMarks[0].subThoroughfare}";
+  }
+
+  MemberList() {
+    List<int> userTotalPrice = [];
+    for (List<RoomMemberMenu> rMML in widget.room.roomMemberMenus) {
+      int tmp = 0;
+      for (RoomMemberMenu rMM in rMML) {
+        tmp += rMM.menuCount * rMM.menuPrice;
+      }
+      userTotalPrice.add(tmp);
+    }
+    return Column(
+      children: [
+        for (int i = 0; i < widget.room.roomUser.length; i++)
+          Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.deepOrange),
+                color: CupertinoColors.secondarySystemBackground),
+            margin: EdgeInsets.all(10),
+            padding: EdgeInsets.all(10),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Image.asset(
+                        "assets/images/user.png",
+                        width: 50,
+                        height: 50,
+                      ),
+                      Text(
+                        widget.room.roomUser[i].userNickname,
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    "주문 금액 : " + userTotalPrice[i].toString() + " 원 ",
+                    style: TextStyle(fontSize: 20),
+                  )
+                ]),
+          ),
+      ],
+    );
   }
 
   @override
@@ -227,10 +300,29 @@ class _Room_infoState extends State<Room_info> {
               ),
             ),
           ),
-          Container(
-            width: 100,
-            height: 50,
-            color: Colors.yellow,
+          Positioned(
+            right: 0,
+            child: Container(
+                margin: EdgeInsets.all(5),
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                    border: Border.all(
+                        color: Colors.deepOrange,
+                        width: 1,
+                        style: BorderStyle.solid)),
+                child: Center(
+                  child: Text(
+                    (timeRest = widget.room.roomExpireTime
+                                .difference(curTime)
+                                .inSeconds) >
+                            0
+                        ? (timeRest / 60).toInt() > 0
+                            ? (timeRest / 60).toInt().toString() + "분 남음"
+                            : (timeRest % 60).toInt().toString() + "초 남음"
+                        : "시간 만료",
+                    style: TextStyle(fontSize: 20),
+                  ),
+                )),
           )
         ],
         // child:
@@ -295,53 +387,6 @@ class _Room_infoState extends State<Room_info> {
           ),
         ),
       ),
-    );
-  }
-
-  MemberList() {
-    List<int> userTotalPrice = [];
-    for (int userId in widget.room.roomUser) {
-      int i = 0;
-      for (RoomMemberMenu m in widget.room.roomMemberMenus) {
-        if (m.userId == userId) {
-          i += m.menuCnt * m.menuPrice;
-        }
-      }
-      userTotalPrice.add(i);
-    }
-    return Column(
-      children: [
-        for (int i = 0; i < widget.room.roomUser.length; i++)
-          Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.deepOrange),
-                color: CupertinoColors.secondarySystemBackground),
-            margin: EdgeInsets.all(10),
-            padding: EdgeInsets.all(10),
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Image.asset(
-                        "assets/images/user.png",
-                        width: 50,
-                        height: 50,
-                      ),
-                      Text(
-                        widget.room.roomUserNickname[i],
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    "주문 금액 : " + userTotalPrice[i].toString() + " 원 ",
-                    style: TextStyle(fontSize: 20),
-                  )
-                ]),
-          ),
-      ],
     );
   }
 

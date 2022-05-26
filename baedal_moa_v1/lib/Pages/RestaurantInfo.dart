@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:badges/badges.dart';
+import 'package:baedal_moa/Model/Room.dart';
 import 'package:baedal_moa/Model/ShoppingCart.dart';
 import 'package:baedal_moa/Pages/MenuInfo.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,8 +18,14 @@ class Restaurant_info extends StatefulWidget {
   Res res;
   int userId;
   String image;
+  bool isHost;
+  int roomId;
   Restaurant_info(
-      {required this.res, required this.userId, required this.image});
+      {required this.roomId,
+      required this.res,
+      required this.userId,
+      required this.image,
+      required this.isHost});
 
   @override
   _Restaurant_infoState createState() => _Restaurant_infoState();
@@ -33,6 +40,7 @@ class _Restaurant_infoState extends State<Restaurant_info> {
   void initState() {
     super.initState();
     shoppingCart = ShoppingCart(
+        roomId: widget.roomId,
         userId: widget.userId,
         resId: widget.res.resId,
         menus: [],
@@ -75,6 +83,8 @@ class _Restaurant_infoState extends State<Restaurant_info> {
                       shoppingCart: shoppingCart,
                       update: update,
                       userId: widget.userId,
+                      isHost: widget.isHost,
+                      roomId: widget.roomId,
                     )));
       },
       elevation: 0,
@@ -86,8 +96,10 @@ class _Restaurant_infoState extends State<Restaurant_info> {
     double deviceWidth = MediaQuery.of(context).size.width;
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: [SystemUiOverlay.bottom]);
-    for (Menu m in _menu) {
-      print(m.menuName);
+    if (widget.isHost == true) {
+      print("방장입니다.");
+    } else {
+      print("참여자 입니다.");
     }
     return WillPopScope(
       onWillPop: shoppingCart.menus.isNotEmpty
@@ -261,6 +273,7 @@ class _Restaurant_infoState extends State<Restaurant_info> {
                                 shoppingCart: shoppingCart,
                                 update: update,
                                 image: menuImage,
+                                isHost: widget.isHost,
                               )));
                 },
                 child: Container(

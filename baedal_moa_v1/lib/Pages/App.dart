@@ -24,7 +24,7 @@ class _AppState extends State<App> {
   int currentPageIndex = 0;
 
   PreferredSizeWidget appbarWidget() {
-    print(widget.curLoc);
+    // print(widget.curLoc);
     String currentTitle = "";
     switch (currentPageIndex) {
       case 0:

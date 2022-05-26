@@ -1,7 +1,11 @@
 import 'dart:convert';
 
+import 'package:baedal_moa/Model/Room.dart';
 import 'package:baedal_moa/Model/ShoppingCart.dart';
 import 'package:baedal_moa/Pages/CreateRoomPage.dart';
+import 'package:baedal_moa/Pages/RoomInfo.dart';
+import 'package:baedal_moa/Services/Services_Room.dart';
+import 'package:baedal_moa/Services/Services_ShoppingCart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -12,20 +16,39 @@ import '../Model/AppUser.dart';
 class CartPage extends StatefulWidget {
   late Res res;
   late ShoppingCart shoppingCart;
+  late List<RoomMemberMenu> roomMemberMenu = [];
   late final ValueChanged<int> update;
   late int userId;
+  bool isHost;
+  int roomId;
 
   CartPage(
-      {required this.res,
+      {required this.roomId,
+      required this.res,
       required this.shoppingCart,
       required this.update,
-      required this.userId});
+      required this.userId,
+      required this.isHost});
 
   @override
   State<CartPage> createState() => _CartPageState();
 }
 
 class _CartPageState extends State<CartPage> {
+  late RoomMemberMenu new_rmm;
+  late List<Room> _room;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    new_rmm = RoomMemberMenu(userId: 0, menuId: 0, menuPrice: 0, menuCount: 0);
+    Services_Room.getRooms(widget.userId.toString()).then((Room1) {
+      setState(() {
+        _room = Room1;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // for (Menu mN in shoppingCart.menus) {
@@ -56,16 +79,45 @@ class _CartPageState extends State<CartPage> {
                     print("<최종 선택 메뉴>");
                     print(
                         "선택한 메뉴 : " + widget.shoppingCart.menusCnt.toString());
-                    if (widget.shoppingCart.menus.isNotEmpty) {
+                    if (widget.shoppingCart.menus.isNotEmpty && widget.isHost) {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
+                            // 방 만들기 페이지로
                             builder: (context) => CreateRoomPage(
                                 shoppingCart: widget.shoppingCart,
                                 res: widget.res,
                                 userId: widget.userId)),
                       );
-                      // 방 만들기 페이지로
+                    } else if (widget.shoppingCart.menus.isNotEmpty &&
+                        !widget.isHost) {
+                      for (Room room in _room) {
+                        if (widget.roomId == room.roomId) {
+                          int i = widget.shoppingCart.menus.length;
+                          for (Menu m in widget.shoppingCart.menus) {
+                            widget.roomMemberMenu.add(RoomMemberMenu(
+                                menuId: m.menuId,
+                                userId: widget.userId,
+                                menuPrice: m.menuPrice,
+                                menuCount:
+                                    widget.shoppingCart.menusCnt[m.menuName]!));
+                            print(jsonEncode(widget.roomMemberMenu).toString());
+                          }
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                //방 정보 페이지로
+                                builder: (context) => Room_info(
+                                      room: room,
+                                      userId: widget.userId,
+                                      isHost: widget.isHost,
+                                    )),
+                          );
+                          Services_ShoppingCart.postShoppingCart(
+                              widget.roomMemberMenu, widget.roomId.toString());
+                        }
+                      }
                     }
                   },
                   style: ElevatedButton.styleFrom(primary: Colors.deepOrange)),

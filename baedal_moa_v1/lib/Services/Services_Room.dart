@@ -19,13 +19,6 @@ class Services_Room {
       print("getRooms의 상태코드  : " + response.statusCode.toString());
       if (200 == response.statusCode) {
         final List<Room> room = roomFromJson(response.body);
-        // print("먹친방 바디 : " + response.body);
-        // for (Room r in room) {
-        //   print("방 번호: " +
-        //       r.roomId.toString() +
-        //       " , 멤버 수: " +
-        //       r.roomUser.length.toString());
-        // }
         return room;
       } else {
         print('Room empty');
@@ -52,12 +45,29 @@ class Services_Room {
         "room_location_y": room.roomLocationY.toString(),
         "room_order_price": room.roomOrderPrice.toString(),
         "room_del_fee": room.roomDelFee.toString(),
-        "room_member_menus": jsonEncode(room.roomMemberMenus),
+        "room_member_menus": jsonEncode(room.roomMemberMenus).toString()
       }).then((res) {
         print("room_postRoom의 상태 코드 : " + res.statusCode.toString());
       }).catchError((error) => print("room_postRoom 에러 : " + error.toString()));
     } catch (error) {
       print('postRoom 에러 : ' + error.toString());
+    }
+  }
+
+  static Future<void> expireRoom(Room room) async {
+    try {
+      String __url = 'http://203.249.22.50:8080/room/expire';
+      http.post(Uri.parse(__url), headers: <String, String>{
+        'Content-Type': 'application/x-www-form-urlencoded',
+      }, body: {
+        "room_id": room.roomId.toString(),
+      }).then((res) {
+        print("room_expireRoom의 상태 코드 : " + res.statusCode.toString());
+      }).catchError(
+          (error) => print("room_expireRoom 에러 : " + error.toString()));
+      print("시간 만료된 방 숨김");
+    } catch (error) {
+      print('expirRoom 에러 : ' + error.toString());
     }
   }
 }

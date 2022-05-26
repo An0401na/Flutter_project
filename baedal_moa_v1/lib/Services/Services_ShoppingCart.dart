@@ -1,19 +1,20 @@
+import 'dart:convert';
+
+import 'package:baedal_moa/Model/Room.dart';
 import 'package:baedal_moa/Model/ShoppingCart.dart';
 import 'package:http/http.dart' as http;
 import '../Model/ShoppingCart.dart';
 
 class Services_ShoppingCart {
-  static Future<void> postShoppingCart(ShoppingCart shoppingCart) async {
+  static Future<void> postShoppingCart(
+      List<RoomMemberMenu> roomMemberMenu, String roomId) async {
     try {
-      String __url = 'http://203.249.22.50:8080/join';
+      String __url = 'http://203.249.22.50:8080/room/join';
       http.post(Uri.parse(__url), headers: <String, String>{
         'Content-Type': 'application/x-www-form-urlencoded',
       }, body: {
-        "userId": shoppingCart.userId.toString(),
-        "resId": shoppingCart.resId.toString(),
-        "menus": shoppingCart.menus,
-        "menusCnt": shoppingCart.menusCnt,
-        "totalPrice": shoppingCart.totalPrice.toString()
+        "roomId": roomId,
+        "room_member_menus": jsonEncode(roomMemberMenu)
       }).then((res) {
         print("postShoppingCart의 상태 코드 : " + res.statusCode.toString());
       }).catchError(

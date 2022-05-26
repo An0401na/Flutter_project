@@ -63,9 +63,11 @@ class _Restaurant_ListState extends State<Restaurant_List> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => Restaurant_info(
+                          roomId: 0,
                           res: res,
                           userId: widget.userId,
                           image: image,
+                          isHost: true,
                         ),
                       ));
                 },

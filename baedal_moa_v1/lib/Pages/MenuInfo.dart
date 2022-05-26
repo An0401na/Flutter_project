@@ -12,12 +12,14 @@ class Menu_info extends StatefulWidget {
   late final ShoppingCart shoppingCart;
   late final ValueChanged<int> update;
   late String image;
+  bool isHost;
 
   Menu_info(
       {required this.menu,
       required this.shoppingCart,
       required this.update,
-      required this.image});
+      required this.image,
+      required this.isHost});
 
   @override
   State<Menu_info> createState() => _Menu_infoState();

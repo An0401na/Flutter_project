@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:baedal_moa/Model/ShoppingCart.dart';
 import 'package:baedal_moa/Pages/RoomInfo.dart';
 import 'package:baedal_moa/Services/Services_Res.dart';
@@ -86,7 +88,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
       roomId: 0,
       roomName: '',
       resId: 0,
-      hostUserId: '',
+      hostUserId: 0,
       roomMaxPeople: 0,
       roomExpireTime: DateTime.now(),
       roomStartTime: DateTime.now(),
@@ -96,9 +98,8 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
       roomDelFee: 0,
       roomIsActive: 0,
       roomMemberMenus: [],
-      roomUserNickname: [],
       roomUser: [],
-      res: RoomRes(resName: '', resLocation: '', resMinOrderPrice: 0),
+      res: RoomRes(resId: 0, resName: '', resLocation: '', resMinOrderPrice: 0),
     );
 
     Services_User.getUsers(widget.userId.toString()).then((User1) {
@@ -142,11 +143,10 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
 
   void printn() {
     curTime = DateTime.now();
-    print(new_room.roomUser);
-    new_room.roomId = 0; //db 들어가면 업데이트 됨
+    // print(new_room.roomUser
     new_room.roomName = room_title.text.toString();
     new_room.resId = widget.res.resId;
-    new_room.hostUserId = widget.userId.toString();
+    new_room.hostUserId = widget.userId;
     new_room.roomMaxPeople = member_count.toInt();
     new_room.roomStartTime = curTime;
     new_room.roomExpireTime = curTime.add(Duration(minutes: time_count));
@@ -154,24 +154,28 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
     new_room.roomLocationY = myMarker[0].position.longitude.toString();
     new_room.roomOrderPrice = widget.shoppingCart.totalPrice;
     new_room.roomDelFee = widget.res.deliveryFees.last.delFee.toInt();
+    List<RoomMemberMenu> rMM = [];
     for (Menu m in widget.shoppingCart.menus) {
-      new_room.roomMemberMenus.add(RoomMemberMenu(
-          menuId: m.menuId,
+      rMM.add(RoomMemberMenu(
           userId: widget.userId,
+          menuId: m.menuId,
           menuPrice: m.menuPrice,
-          menuCnt: widget.shoppingCart.menusCnt[m.menuName]!));
+          menuCount: widget.shoppingCart.menusCnt[m.menuName]!));
     }
-    String userName = "nobody";
-    userName = userList[0].userNickname;
-    new_room.roomUserNickname.add(userName);
-    new_room.roomUser.add(widget.userId);
+    new_room.roomMemberMenus.add(rMM);
+    new_room.roomUser.add(RoomUser(
+        userId: widget.userId,
+        userNickname: userList[0].userNickname,
+        userLocationX: userList[0].userLocationX,
+        userLocationY: userList[0].userLocationY,
+        userCash: userList[0].userCash));
     new_room.res = RoomRes(
         resName: widget.res.resName,
         resLocation: widget.res.resLocation,
-        resMinOrderPrice: widget.res.resMinOrderPrice);
+        resMinOrderPrice: widget.res.resMinOrderPrice,
+        resId: widget.res.resId);
 
     Services_Room.postRoom(new_room);
-    // Services_ShoppingCart.postShoppingCart(widget.shoppingCart);
 
     print("방 번호 : " + new_room.roomId.toString());
     print("방 이름 : " + new_room.roomName);
@@ -183,7 +187,8 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
     print("배달비 : " + new_room.roomDelFee.toString());
     print("음식 받을 곳(위도) : " + myMarker[0].position.latitude.toString());
     print("음식 받을 곳(경도) : " + myMarker[0].position.longitude.toString());
-    print("인원" + new_room.roomUser.toString());
+    print("인원 : " + jsonEncode(new_room.roomUser));
+    print("메뉴 :" + jsonEncode(new_room.roomMemberMenus));
   }
 
   @override
@@ -396,7 +401,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                         Container(
                             color: Colors.deepOrange,
                             width: MediaQuery.of(context).size.width * 0.8,
-                            height: MediaQuery.of(context).size.width * 0.8,
+                            height: MediaQuery.of(context).size.width * 0.5,
                             padding: const EdgeInsets.all(3),
                             child: Container(
                                 color: Colors.white,
@@ -406,7 +411,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                                     : GoogleMap(
                                         initialCameraPosition: CameraPosition(
                                             target: myMarker.first.position,
-                                            zoom: 20.0),
+                                            zoom: 18.0),
                                         markers: Set.from(myMarker),
                                         onTap: _handleTap,
                                       ))),
@@ -455,6 +460,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                           builder: (context) => Room_info(
                             room: new_room,
                             userId: widget.userId,
+                            isHost: true,
                           ),
                         ));
                   }

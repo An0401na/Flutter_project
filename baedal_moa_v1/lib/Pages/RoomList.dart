@@ -1,4 +1,5 @@
 import 'package:baedal_moa/Pages/RestaurantInfo.dart';
+import 'package:baedal_moa/Services/Services_Res.dart';
 import 'package:baedal_moa/Services/Services_User.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
+import '../Model/Res.dart';
 import '../Model/Room.dart';
 import '../Model/AppUser.dart';
 import '../Services/Services_Room.dart';
@@ -25,12 +27,13 @@ class Room_List extends StatefulWidget {
 class _Room_ListState extends State<Room_List> {
   @override
   late List<Room> _room = [];
+  late List<Res> _res = [];
   late List<AppUser> _user = [];
   late Timer timer;
   DateTime curTime = DateTime.now();
   late String locStr;
   List<Marker> myMarker = [];
-  // late List<User> user = [];
+  late String hostNickName;
 
   RefreshController refreshController = RefreshController(initialRefresh: true);
 
@@ -60,6 +63,11 @@ class _Room_ListState extends State<Room_List> {
     Services_User.getUsers(widget.userId.toString()).then((User1) {
       setState(() {
         _user = User1;
+      });
+    });
+    Services_Res.getRests().then((Res1) {
+      setState(() {
+        _res = Res1;
       });
     });
     timer = Timer.periodic(Duration(seconds: 1), (timer) {
@@ -93,6 +101,7 @@ class _Room_ListState extends State<Room_List> {
 
   Widget build(BuildContext context) {
     int timeRest;
+
     return SmartRefresher(
       enablePullDown: true,
       controller: refreshController,
@@ -143,7 +152,7 @@ class _Room_ListState extends State<Room_List> {
                                     ),
                                     SizedBox(height: 5),
                                     Text(
-                                      room.hostUserId,
+                                      room.roomUser[0].userNickname.toString(),
                                       style: TextStyle(
                                           fontSize: 12, color: Colors.grey),
                                     ),
@@ -316,14 +325,30 @@ class _Room_ListState extends State<Room_List> {
                                         ),
                                         onPressed: () {
                                           Navigator.pop(context);
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      Room_info(
-                                                        room: room,
-                                                        userId: widget.userId,
-                                                      )));
+                                          for (Res res in _res) {
+                                            if (room.resId == res.resId) {
+                                              print(res.resId.toString());
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      //이것때문에 room 객체에서 roomRes를 받아오는게 아니라 Res 자체를 다 받아와야할듯..
+                                                      builder: (context) =>
+                                                          Restaurant_info(
+                                                            roomId: room.roomId,
+                                                            res: res,
+                                                            userId:
+                                                                widget.userId,
+                                                            image:
+                                                                res.resImageDir,
+                                                            isHost: false,
+                                                          )
+                                                      // Room_info(
+                                                      //   room: room,
+                                                      //   userId: widget.userId,
+                                                      // )
+                                                      ));
+                                            }
+                                          }
                                         })
                                   ],
                                 );

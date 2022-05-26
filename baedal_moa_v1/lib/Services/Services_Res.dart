@@ -12,9 +12,9 @@ class Services_Res {
       final response = await http.get(Uri.parse(url));
       if (200 == response.statusCode) {
         final List<Res> Res1 = resFromJson(response.body);
-        for (int i = 0; i < Res1.length; i++) {
-          print("가게 : " + Res1[i].resLocation);
-        }
+        // for (int i = 0; i < Res1.length; i++) {
+        //   print("가게 : " + Res1[i].resLocation);
+        // }
         return Res1;
       } else {
         print('Restaurant empty');

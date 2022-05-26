@@ -4,10 +4,6 @@
 
 import 'dart:convert';
 
-import 'package:baedal_moa/Pages/App.dart';
-
-import 'AppUser.dart';
-
 List<Room> roomFromJson(String str) =>
     List<Room>.from(json.decode(str).map((x) => Room.fromJson(x)));
 
@@ -28,16 +24,15 @@ class Room {
     required this.roomOrderPrice,
     required this.roomDelFee,
     required this.roomIsActive,
-    required this.roomMemberMenus,
-    required this.roomUserNickname,
     required this.roomUser,
+    required this.roomMemberMenus,
     required this.res,
   });
 
   int roomId;
   String roomName;
   int resId;
-  String hostUserId;
+  int hostUserId;
   int roomMaxPeople;
   DateTime roomStartTime;
   DateTime roomExpireTime;
@@ -46,10 +41,8 @@ class Room {
   int roomOrderPrice;
   int roomDelFee;
   int roomIsActive;
-  List<RoomMemberMenu> roomMemberMenus;
-  List<String> roomUserNickname;
-  List<int> roomUser;
-
+  List<RoomUser> roomUser;
+  List<List<RoomMemberMenu>> roomMemberMenus;
   RoomRes res;
 
   factory Room.fromJson(Map<String, dynamic> json) => Room(
@@ -65,11 +58,11 @@ class Room {
         roomOrderPrice: json["room_order_price"],
         roomDelFee: json["room_del_fee"],
         roomIsActive: json["room_is_active"],
-        roomMemberMenus: List<RoomMemberMenu>.from(
-            json["room_member_menus"].map((x) => RoomMemberMenu.fromJson(x))),
-        roomUserNickname:
-            List<String>.from(json["room_user_nickname"].map((x) => x)),
-        roomUser: List<int>.from(json["room_user"].map((x) => x)),
+        roomUser: List<RoomUser>.from(
+            json["room_user"].map((x) => RoomUser.fromJson(x))),
+        roomMemberMenus: List<List<RoomMemberMenu>>.from(
+            json["room_member_menus"].map((x) => List<RoomMemberMenu>.from(
+                x.map((x) => RoomMemberMenu.fromJson(x))))),
         res: RoomRes.fromJson(json["res"]),
       );
 
@@ -86,33 +79,35 @@ class Room {
         "room_order_price": roomOrderPrice,
         "room_del_fee": roomDelFee,
         "room_is_active": roomIsActive,
-        "room_member_menus":
-            List<dynamic>.from(roomMemberMenus.map((x) => x.toJson())),
-        "room_user_nickname":
-            List<dynamic>.from(roomUserNickname.map((x) => x)),
-        "room_user": List<dynamic>.from(roomUser.map((x) => x)),
+        "room_user": List<dynamic>.from(roomUser.map((x) => x.toJson())),
+        "room_member_menus": List<dynamic>.from(roomMemberMenus
+            .map((x) => List<dynamic>.from(x.map((x) => x.toJson())))),
         "res": res.toJson(),
       };
 }
 
 class RoomRes {
   RoomRes({
+    required this.resId,
     required this.resName,
     required this.resLocation,
     required this.resMinOrderPrice,
   });
 
+  int resId;
   String resName;
   String resLocation;
   int resMinOrderPrice;
 
   factory RoomRes.fromJson(Map<String, dynamic> json) => RoomRes(
+        resId: json["res_id"],
         resName: json["res_name"],
         resLocation: json["res_location"],
         resMinOrderPrice: json["res_min_order_price"],
       );
 
   Map<String, dynamic> toJson() => {
+        "res_id": resId,
         "res_name": resName,
         "res_location": resLocation,
         "res_min_order_price": resMinOrderPrice,
@@ -120,27 +115,61 @@ class RoomRes {
 }
 
 class RoomMemberMenu {
-  RoomMemberMenu(
-      {required this.menuId,
-      required this.userId,
-      required this.menuPrice,
-      required this.menuCnt});
+  RoomMemberMenu({
+    required this.userId,
+    required this.menuId,
+    required this.menuPrice,
+    required this.menuCount,
+  });
 
-  int menuId;
   int userId;
+  int menuId;
   int menuPrice;
-  int menuCnt;
+  int menuCount;
 
   factory RoomMemberMenu.fromJson(Map<String, dynamic> json) => RoomMemberMenu(
-      menuId: json["menu_id"],
-      userId: json["user_id"],
-      menuPrice: json["menu_price"],
-      menuCnt: json["menu_count"]);
+        userId: json["user_id"],
+        menuId: json["menu_id"],
+        menuPrice: json["menu_price"],
+        menuCount: json["menu_count"],
+      );
 
   Map<String, dynamic> toJson() => {
-        "menu_id": menuId,
         "user_id": userId,
+        "menu_id": menuId,
         "menu_price": menuPrice,
-        "menu_count": menuCnt
+        "menu_count": menuCount,
+      };
+}
+
+class RoomUser {
+  RoomUser({
+    required this.userId,
+    required this.userNickname,
+    required this.userLocationX,
+    required this.userLocationY,
+    required this.userCash,
+  });
+
+  int userId;
+  String userNickname;
+  String userLocationX;
+  String userLocationY;
+  int userCash;
+
+  factory RoomUser.fromJson(Map<String, dynamic> json) => RoomUser(
+        userId: json["user_id"],
+        userNickname: json["user_nickname"],
+        userLocationX: json["user_location_x"],
+        userLocationY: json["user_location_y"],
+        userCash: json["user_cash"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "user_id": userId,
+        "user_nickname": userNickname,
+        "user_location_x": userLocationX,
+        "user_location_y": userLocationY,
+        "user_cash": userCash,
       };
 }
