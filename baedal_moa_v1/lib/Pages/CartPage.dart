@@ -112,7 +112,9 @@ class _CartPageState extends State<CartPage> {
                               userLocationX: _userList[0].userLocationX,
                               userLocationY: _userList[0].userLocationY,
                               userCash: _userList[0].userCash));
-                          print(jsonEncode(room.roomMemberMenus));
+                          print("룸 멤버 메뉴 : " +
+                              jsonEncode(menuList) +
+                              menuList[0].userId.toString());
                           Services_ShoppingCart.postShoppingCart(
                               menuList, widget.roomId.toString());
                           Navigator.push(

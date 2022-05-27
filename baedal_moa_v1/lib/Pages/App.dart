@@ -109,7 +109,7 @@ class _AppState extends State<App> {
               children: [
                 getCategory("전체보기"),
                 getCategory("치킨"),
-                getCategory("피자/양식"),
+                getCategory("피자,양식"),
               ],
             ),
             Row(
@@ -117,15 +117,15 @@ class _AppState extends State<App> {
               children: [
                 getCategory("중국집"),
                 getCategory("한식"),
-                getCategory("일식/돈까스"),
+                getCategory("일식,돈까스"),
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                getCategory("족발/보쌈"),
+                getCategory("족발,보쌈"),
                 getCategory("분식"),
-                getCategory("카페/디저트"),
+                getCategory("카페,디저트"),
               ],
             )
           ],

@@ -17,8 +17,6 @@ class Services_ShoppingCart {
         "room_id": roomId,
         "user_id": roomMemberMenu[0].userId.toString(),
         "room_member_menus": jsonEncode(roomMemberMenu)
-      }).then((res) {
-        print("postShoppingCart의 상태 코드 : " + res.statusCode.toString());
       }).catchError(
           (error) => print("postShoppingCart에러 : " + error.toString()));
     } catch (error) {
