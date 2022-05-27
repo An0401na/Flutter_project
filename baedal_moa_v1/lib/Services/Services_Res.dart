@@ -25,6 +25,23 @@ class Services_Res {
     }
   }
 
+  static Future<List<Res>> getCats(String category) async {
+    try {
+      String __url = 'http://203.249.22.50:8080/category/${category}';
+      final response = await http.get(Uri.parse(__url));
+      if (200 == response.statusCode) {
+        final List<Res> Res1 = resFromJson(response.body);
+        print("aaaa");
+        return Res1;
+      } else {
+        print('Restaurant empty');
+        return <Res>[]; // 빈 사용자 목록을 반환
+      }
+    } catch (e) {
+      return <Res>[];
+    }
+  }
+
   // 안쓰임 레스토랑 아이디 전송
   static Future<void> postRest(String resId) async {
     try {

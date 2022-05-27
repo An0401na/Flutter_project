@@ -13,8 +13,15 @@ import 'RestaurantInfo.dart';
 class Restaurant_List extends StatefulWidget {
   late int userId;
   late String curLoc;
+  late bool isCategory;
+  late String categoryName;
 
-  Restaurant_List({Key? key, required this.userId, required this.curLoc})
+  Restaurant_List(
+      {Key? key,
+      required this.userId,
+      required this.curLoc,
+      required this.isCategory,
+      required this.categoryName})
       : super(key: key);
   @override
   _Restaurant_ListState createState() => _Restaurant_ListState();
@@ -30,12 +37,20 @@ class _Restaurant_ListState extends State<Restaurant_List> {
     super.initState();
     _loading = true;
 
-    Services_Res.getRests().then((Res1) {
-      setState(() {
-        _res = Res1;
-        _loading = false;
+    if (widget.isCategory) {
+      Services_Res.getCats(widget.categoryName).then((Res1) {
+        setState(() {
+          _res = Res1;
+        });
       });
-    });
+    } else {
+      Services_Res.getRests().then((Res1) {
+        setState(() {
+          _res = Res1;
+          _loading = false;
+        });
+      });
+    }
   }
 
   @override

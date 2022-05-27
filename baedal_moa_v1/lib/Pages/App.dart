@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:baedal_moa/Pages/GoogleMapPage.dart';
+import 'package:baedal_moa/Services/Services_User.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ import 'RoomList.dart';
 class App extends StatefulWidget {
   int userId;
   late String curLoc;
+  late AppUser _user;
   App({Key? key, required this.userId, required this.curLoc}) : super(key: key);
   @override
   State<App> createState() => _AppState();
@@ -22,6 +24,17 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   late Icon appBarIcon;
   int currentPageIndex = 0;
+  Map<String, String> categoryNames = {
+    '햄버거': 'burger',
+    '치킨': 'chicken',
+    '피자,양식': 'pizza',
+    '중국집': 'zzangggae',
+    '한식': 'korea',
+    '일식,돈까스': 'japanese',
+    '족발,보쌈': 'zokbal',
+    '분식': 'bunsik',
+    '카페,디저트': 'cafe'
+  };
 
   PreferredSizeWidget appbarWidget() {
     // print(widget.curLoc);
@@ -69,6 +82,16 @@ class _AppState extends State<App> {
     return InkWell(
       onTap: () {
         Fluttertoast.showToast(msg: "카테고리 클릭");
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Restaurant_List(
+                curLoc: widget.curLoc,
+                userId: widget.userId,
+                isCategory: true,
+                categoryName: '${categoryNames[name]}',
+              ),
+            ));
       },
       child: Container(
         width: 100,
@@ -107,7 +130,7 @@ class _AppState extends State<App> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                getCategory("전체보기"),
+                getCategory("햄버거"),
                 getCategory("치킨"),
                 getCategory("피자,양식"),
               ],
@@ -198,6 +221,8 @@ class _AppState extends State<App> {
                               builder: (context) => Restaurant_List(
                                 curLoc: widget.curLoc,
                                 userId: widget.userId,
+                                isCategory: false,
+                                categoryName: '',
                               ),
                             ));
                       })
@@ -308,7 +333,12 @@ class _AppState extends State<App> {
         ),
       );
     } else if (currentPageIndex == 4) {
-      //검색 탭
+      Services_User.getUser(widget.userId.toString()).then((User1) {
+        setState(() {
+          widget._user = User1;
+        });
+      });
+      print("user 는 " + widget._user.toString());
       return WillPopScope(
         onWillPop: onBackKey,
         child: Scaffold(
@@ -322,7 +352,7 @@ class _AppState extends State<App> {
         onWillPop: onBackKey,
         child: Scaffold(
             appBar: appbarWidget(),
-            body: profile(),
+            body: bodyWidget(context),
             bottomNavigationBar: bottomNavigationBarWidget()),
       );
     }
