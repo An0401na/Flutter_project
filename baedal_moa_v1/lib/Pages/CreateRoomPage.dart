@@ -175,20 +175,31 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
         resMinOrderPrice: widget.res.resMinOrderPrice,
         resId: widget.res.resId);
 
-    Services_Room.postRoom(new_room);
-
-    print("방 번호 : " + new_room.roomId.toString());
-    print("방 이름 : " + new_room.roomName);
-    print("가게 번호 : " + new_room.resId.toString());
-    print("모집 인원 : " + new_room.roomMaxPeople.toString());
-    print("모집 시작 시간 : " + new_room.roomStartTime.toString());
-    print("모집 마감 시간 : " + new_room.roomExpireTime.toString());
-    print("금액 : " + new_room.roomOrderPrice.toString());
-    print("배달비 : " + new_room.roomDelFee.toString());
-    print("음식 받을 곳(위도) : " + myMarker[0].position.latitude.toString());
-    print("음식 받을 곳(경도) : " + myMarker[0].position.longitude.toString());
-    print("인원 : " + jsonEncode(new_room.roomUser));
-    print("메뉴 :" + jsonEncode(new_room.roomMemberMenus));
+    Services_Room.postRoom(new_room).then((tmp) {
+      setState(() {
+        new_room.roomId = tmp;
+        print("방 이름 : " + new_room.roomName);
+        print("가게 번호 : " + new_room.resId.toString());
+        print("모집 인원 : " + new_room.roomMaxPeople.toString());
+        print("모집 시작 시간 : " + new_room.roomStartTime.toString());
+        print("모집 마감 시간 : " + new_room.roomExpireTime.toString());
+        print("금액 : " + new_room.roomOrderPrice.toString());
+        print("배달비 : " + new_room.roomDelFee.toString());
+        print("음식 받을 곳(위도) : " + myMarker[0].position.latitude.toString());
+        print("음식 받을 곳(경도) : " + myMarker[0].position.longitude.toString());
+        print("인원 : " + jsonEncode(new_room.roomUser));
+        print("메뉴 :" + jsonEncode(new_room.roomMemberMenus));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Room_info(
+                room: new_room,
+                userId: widget.userId,
+                isHost: true,
+              ),
+            ));
+      });
+    });
   }
 
   @override
@@ -256,6 +267,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                         ],
                       ),
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text('가게 위치'),
                           const SizedBox(
@@ -401,7 +413,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                         Container(
                             color: Colors.deepOrange,
                             width: MediaQuery.of(context).size.width * 0.8,
-                            height: MediaQuery.of(context).size.width * 0.5,
+                            height: MediaQuery.of(context).size.width * 0.8,
                             padding: const EdgeInsets.all(3),
                             child: Container(
                                 color: Colors.white,
@@ -454,15 +466,6 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                         });
                   } else {
                     printn();
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Room_info(
-                            room: new_room,
-                            userId: widget.userId,
-                            isHost: true,
-                          ),
-                        ));
                   }
                 },
               ),

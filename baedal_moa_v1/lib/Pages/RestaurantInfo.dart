@@ -251,7 +251,6 @@ class _Restaurant_infoState extends State<Restaurant_info> {
   }
 
   MenuList() {
-    late String menuImage;
     return Column(
       children: [
         for (Menu m in _menu)
@@ -272,7 +271,7 @@ class _Restaurant_infoState extends State<Restaurant_info> {
                                 menu: m,
                                 shoppingCart: shoppingCart,
                                 update: update,
-                                image: menuImage,
+                                image: m.menuImageDir,
                                 isHost: widget.isHost,
                               )));
                 },
@@ -284,7 +283,7 @@ class _Restaurant_infoState extends State<Restaurant_info> {
                         child: Hero(
                           tag: m.menuName,
                           child: Image.network(
-                            menuImage = m.menuImageDir,
+                            m.menuImageDir,
                             width: 100,
                           ),
                         )),

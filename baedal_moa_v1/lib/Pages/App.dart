@@ -263,7 +263,7 @@ class _AppState extends State<App> {
           Container(
             padding: EdgeInsets.only(bottom: 5),
             child: Text(
-              '  아이디 :  joonoah ',
+              '  아이디 :' + widget.userId.toString(),
               style: TextStyle(fontSize: 25),
             ),
           ), // 나중에 id로 변경해야함

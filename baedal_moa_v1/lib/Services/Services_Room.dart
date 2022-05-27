@@ -19,6 +19,8 @@ class Services_Room {
       print("getRooms의 상태코드  : " + response.statusCode.toString());
       if (200 == response.statusCode) {
         final List<Room> room = roomFromJson(response.body);
+        for (Room r in room)
+          print(r.roomId.toString() + ":" + jsonEncode(r.roomUser));
         return room;
       } else {
         print('Room empty');
@@ -29,10 +31,10 @@ class Services_Room {
     }
   }
 
-  static Future<void> postRoom(Room room) async {
+  static Future<dynamic> postRoom(Room room) async {
     try {
       String __url = 'http://203.249.22.50:8080/room/create';
-      http.post(Uri.parse(__url), headers: <String, String>{
+      final res = await http.post(Uri.parse(__url), headers: <String, String>{
         'Content-Type': 'application/x-www-form-urlencoded',
       }, body: {
         "room_name": room.roomName.toString(),
@@ -46,11 +48,18 @@ class Services_Room {
         "room_order_price": room.roomOrderPrice.toString(),
         "room_del_fee": room.roomDelFee.toString(),
         "room_member_menus": jsonEncode(room.roomMemberMenus).toString()
-      }).then((res) {
-        print("room_postRoom의 상태 코드 : " + res.statusCode.toString());
-      }).catchError((error) => print("room_postRoom 에러 : " + error.toString()));
+      });
+      print("room_postRoom의 상태 코드 : " + res.statusCode.toString());
+      if (res.statusCode == 200) {
+        int tmp = jsonDecode(res.body)['room_id'];
+        print("room_id: " + tmp.toString());
+        return tmp;
+      } else {
+        return -1;
+      }
     } catch (error) {
       print('postRoom 에러 : ' + error.toString());
+      return -1;
     }
   }
 
@@ -67,6 +76,23 @@ class Services_Room {
           (error) => print("room_expireRoom 에러 : " + error.toString()));
     } catch (error) {
       print('expirRoom 에러 : ' + error.toString());
+    }
+  }
+
+  //room/out 에 room_id랑 user_id 주면 방 나가기
+  static Future<void> outRoom(String roomId, String userId) async {
+    try {
+      String __url = 'http://203.249.22.50:8080/room/out';
+      http.post(Uri.parse(__url), headers: <String, String>{
+        'Content-Type': 'application/x-www-form-urlencoded',
+      }, body: {
+        "room_id": roomId,
+        "user_id": userId
+      }).then((res) {
+        print("outRoom 상태 코드 : " + res.statusCode.toString());
+      }).catchError((error) => print("outRoom 에러 : " + error.toString()));
+    } catch (error) {
+      print('outRoom 에러 : ' + error.toString());
     }
   }
 }

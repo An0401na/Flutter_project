@@ -28,7 +28,8 @@ class Room_info extends StatefulWidget {
 class _Room_infoState extends State<Room_info> {
   late String locStr;
   late List<AppUser> userList;
-  late List<Room> roomList;
+  // late List<Room> roomList;
+  late Room _room;
   late String userLoc;
   late Timer timer;
   late int timeRest;
@@ -46,27 +47,37 @@ class _Room_infoState extends State<Room_info> {
         userList = User1;
       });
     });
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      setState(() {
-        curTime = DateTime.now();
-        Services_Room.getRooms(widget.userId.toString()).then((Room1) {
-          roomList = Room1;
-        });
-        for (Room r in roomList) {
-          if (r.roomId == widget.room.roomId) widget.room = r;
-        }
-        if (timeRest < 0) {
-          Services_Room.expireRoom(widget.room);
-          timer.cancel();
-        }
-      });
-    });
+    // Services_Room.getRooms(widget.userId.toString()).then((Room1) {
+    //   setState(() {
+    //     roomList = Room1;
+    //   });
+    // });
+    // for (Room r in roomList) {
+    //   if (r.roomId == widget.room.roomId) _room = r;
+    // }
+    // timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    //   setState(() {
+    //     curTime = DateTime.now();
+    //     Services_Room.getRooms(widget.userId.toString()).then((Room1) {
+    //       setState(() {
+    //         roomList = Room1;
+    //       });
+    //     });
+    //     for (Room r in roomList) {
+    //       if (r.roomId == widget.room.roomId) _room = r;
+    //     }
+    //     if (timeRest < 0) {
+    //       Services_Room.expireRoom(widget.room);
+    //       timer.cancel();
+    //     }
+    //   });
+    // });
   }
 
-  void dispose() {
-    super.dispose();
-    timer.cancel();
-  }
+  // void dispose() {
+  //   super.dispose();
+  //   timer.cancel();
+  // }
 
   getLocation() async {
     double lat = double.parse(widget.room.roomLocationX);
@@ -401,6 +412,8 @@ class _Room_infoState extends State<Room_info> {
             actions: [
               TextButton(
                   onPressed: () {
+                    Services_Room.outRoom(widget.room.roomId.toString(),
+                        widget.userId.toString());
                     // DB에 있는 방에도 멤버 삭제
                     Navigator.push(
                         context,

@@ -70,18 +70,18 @@ class _Room_ListState extends State<Room_List> {
         _res = Res1;
       });
     });
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      setState(() {
-        curTime = DateTime.now();
-      });
-    });
+    // timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    //   setState(() {
+    //     curTime = DateTime.now();
+    //   });
+    // });
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    timer.cancel();
-  }
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  //   timer.cancel();
+  // }
 
   void getLocation(Room room) async {
     double lat = double.parse(room.roomLocationX);
@@ -152,7 +152,7 @@ class _Room_ListState extends State<Room_List> {
                                     ),
                                     SizedBox(height: 5),
                                     Text(
-                                      room.roomUser[0].userNickname.toString(),
+                                      room.roomUser[0].userNickname,
                                       style: TextStyle(
                                           fontSize: 12, color: Colors.grey),
                                     ),
@@ -324,6 +324,7 @@ class _Room_ListState extends State<Room_List> {
                                               color: Colors.deepOrange),
                                         ),
                                         onPressed: () {
+                                          // timer.cancel();
                                           Navigator.pop(context);
                                           for (Res res in _res) {
                                             if (room.resId == res.resId) {
