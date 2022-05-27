@@ -232,6 +232,59 @@ class _AppState extends State<App> {
     );
   }
 
+  Widget line = Container(
+      padding: const EdgeInsets.only(left: 10, right: 10),
+      width: 500,
+      child: Divider(color: Colors.black, thickness: 1.0));
+
+  Widget profile() {
+    return Scaffold(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 220,
+            height: 220,
+            margin: EdgeInsets.only(left: 95, top: 35, bottom: 25),
+            child: Image.asset(
+              "assets/images/user.png",
+              width: 100,
+              height: 100,
+            ),
+          ),
+          line,
+          Container(
+            padding: EdgeInsets.only(bottom: 8),
+            child: Text(
+              '  내정보',
+              style: TextStyle(fontSize: 35),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.only(bottom: 5),
+            child: Text(
+              '  아이디 :  joonoah ',
+              style: TextStyle(fontSize: 25),
+            ),
+          ), // 나중에 id로 변경해야함
+          Container(
+            padding: EdgeInsets.only(bottom: 5),
+            child: Text(
+              '  닉네임 :  주노아 ',
+              style: TextStyle(fontSize: 25),
+            ),
+          ), //나중에 name으로 변경해야함
+          Container(
+            child: Text(
+              '  포인트 :  1000000 Point ',
+              style: TextStyle(fontSize: 25),
+            ),
+          ), //나중에 cash로 변경해야함
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (currentPageIndex == 0) {
@@ -254,13 +307,22 @@ class _AppState extends State<App> {
           bottomNavigationBar: bottomNavigationBarWidget(),
         ),
       );
+    } else if (currentPageIndex == 4) {
+      //검색 탭
+      return WillPopScope(
+        onWillPop: onBackKey,
+        child: Scaffold(
+          body: profile(),
+          bottomNavigationBar: bottomNavigationBarWidget(),
+        ),
+      );
     } else {
       //나머지 탭 (찜, 주문내역, 프로필)
       return WillPopScope(
         onWillPop: onBackKey,
         child: Scaffold(
             appBar: appbarWidget(),
-            body: bodyWidget(context),
+            body: profile(),
             bottomNavigationBar: bottomNavigationBarWidget()),
       );
     }

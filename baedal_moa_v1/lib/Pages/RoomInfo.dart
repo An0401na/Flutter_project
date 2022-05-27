@@ -15,7 +15,7 @@ import '../Model/Room.dart';
 import 'App.dart';
 
 class Room_info extends StatefulWidget {
-  late final Room room;
+  late Room room;
   late int userId;
   bool isHost;
 
