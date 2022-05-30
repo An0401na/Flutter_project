@@ -79,17 +79,12 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
     lon = tappedPoint.longitude;
     print("사용자가 마크한 좌표 : " + lat.toString() + ", " + lon.toString());
     _getAddress();
-    // final placeMarks =
-    //     await placemarkFromCoordinates(lat, lon, localeIdentifier: "ko_KR");
     setState(() {
       myMarker = [];
       myMarker.add(Marker(
         markerId: MarkerId("first"),
         position: tappedPoint,
       ));
-      // locStr = ("${placeMarks[0].street}");
-      // print("LocStr : " + locStr);
-      // curLoc = "${placeMarks[0].thoroughfare} ${placeMarks[0].subThoroughfare}";
     });
   }
 
