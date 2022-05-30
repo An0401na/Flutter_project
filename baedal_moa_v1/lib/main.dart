@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk/all.dart';
 import 'Pages/KakaoLoginPage.dart';
 import 'Pages/GoogleMapPage.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,6 +39,10 @@ class Baedal_Moa extends StatelessWidget {
                         backgroundColor: Colors.white,
                         foregroundColor: Colors.deepOrange,
                         titleTextStyle: TextStyle(color: Colors.black))),
+                // home: FlutterNativeSplash(
+                //   splash: Image.asset('assets/logo.png'),
+                //   nextScreen: KakaoLoginPage(),
+                // ),
                 home: KakaoLoginPage()
                 // GoogleMapPage(
                 // userId: 0,
