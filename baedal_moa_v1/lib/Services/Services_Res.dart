@@ -31,7 +31,6 @@ class Services_Res {
       final response = await http.get(Uri.parse(__url));
       if (200 == response.statusCode) {
         final List<Res> Res1 = resFromJson(response.body);
-        print("aaaa");
         return Res1;
       } else {
         print('Restaurant empty');

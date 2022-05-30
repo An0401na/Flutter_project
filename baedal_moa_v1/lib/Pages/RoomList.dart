@@ -297,7 +297,27 @@ class _Room_ListState extends State<Room_List> {
                             ],
                           ),
                           onTap: () {
-                            if (room.roomUser.length == room.roomMaxPeople) {
+                            if (timeRest < 0) {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text("이미 만료된 방입니다!"),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text(
+                                              "확인",
+                                              style: TextStyle(
+                                                  color: Colors.deepOrange),
+                                            ))
+                                      ],
+                                    );
+                                  });
+                            } else if (room.roomUser.length ==
+                                room.roomMaxPeople) {
                               showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
@@ -316,58 +336,60 @@ class _Room_ListState extends State<Room_List> {
                                       ],
                                     );
                                   });
-                            }
-                            print("참여하기");
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                // return object of type Dialog
-                                return AlertDialog(
-                                  title: Text("<" +
-                                      room.roomName.toString() +
-                                      "> 방에 참여하시겠습니까?"),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      child: const Text(
-                                        "취소",
-                                        style:
-                                            TextStyle(color: Colors.deepOrange),
-                                      ),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                    ),
-                                    TextButton(
+                            } else {
+                              print("참여하기");
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  // return object of type Dialog
+                                  return AlertDialog(
+                                    title: Text("<" +
+                                        room.roomName.toString() +
+                                        "> 방에 참여하시겠습니까?"),
+                                    actions: <Widget>[
+                                      TextButton(
                                         child: const Text(
-                                          "확인",
+                                          "취소",
                                           style: TextStyle(
                                               color: Colors.deepOrange),
                                         ),
                                         onPressed: () {
-                                          // timer.cancel();
                                           Navigator.pop(context);
-                                          for (Res res in _res) {
-                                            if (room.resId == res.resId) {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          Restaurant_info(
-                                                            roomId: room.roomId,
-                                                            res: res,
-                                                            userId:
-                                                                widget.userId,
-                                                            image:
-                                                                res.resImageDir,
-                                                            isHost: false,
-                                                          )));
+                                        },
+                                      ),
+                                      TextButton(
+                                          child: const Text(
+                                            "확인",
+                                            style: TextStyle(
+                                                color: Colors.deepOrange),
+                                          ),
+                                          onPressed: () {
+                                            // timer.cancel();
+                                            Navigator.pop(context);
+                                            for (Res res in _res) {
+                                              if (room.resId == res.resId) {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            Restaurant_info(
+                                                              roomId:
+                                                                  room.roomId,
+                                                              res: res,
+                                                              userId:
+                                                                  widget.userId,
+                                                              image: res
+                                                                  .resImageDir,
+                                                              isHost: false,
+                                                            )));
+                                              }
                                             }
-                                          }
-                                        })
-                                  ],
-                                );
-                              },
-                            );
+                                          })
+                                    ],
+                                  );
+                                },
+                              );
+                            }
                           },
                         ),
                       ),

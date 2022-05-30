@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Model/AppUser.dart';
 import '../Model/Room.dart';
@@ -28,14 +29,13 @@ class Room_info extends StatefulWidget {
 class _Room_infoState extends State<Room_info> {
   late String locStr;
   late List<AppUser> userList;
-  // late List<Room> roomList;
+  late List<Room> roomList;
   late Room _room;
   late String userLoc;
   late Timer timer;
   late int timeRest;
   DateTime curTime = DateTime.now();
   List<Marker> myMarker = [];
-  int j = 0;
 
   @override
   void initState() {
@@ -47,37 +47,39 @@ class _Room_infoState extends State<Room_info> {
         userList = User1;
       });
     });
-    // Services_Room.getRooms(widget.userId.toString()).then((Room1) {
-    //   setState(() {
-    //     roomList = Room1;
-    //   });
-    // });
-    // for (Room r in roomList) {
-    //   if (r.roomId == widget.room.roomId) _room = r;
-    // }
-    // timer = Timer.periodic(Duration(seconds: 1), (timer) {
-    //   setState(() {
-    //     curTime = DateTime.now();
-    //     Services_Room.getRooms(widget.userId.toString()).then((Room1) {
-    //       setState(() {
-    //         roomList = Room1;
-    //       });
-    //     });
-    //     for (Room r in roomList) {
-    //       if (r.roomId == widget.room.roomId) _room = r;
-    //     }
-    //     if (timeRest < 0) {
-    //       Services_Room.expireRoom(widget.room);
-    //       timer.cancel();
-    //     }
-    //   });
-    // });
+    Services_Room.getRooms(widget.userId.toString()).then((Room1) {
+      setState(() {
+        roomList = Room1;
+        for (Room r in roomList) {
+          if (r.roomId == widget.room.roomId) _room = r;
+        }
+      });
+      setSharedPrefs(true, _room.roomId);
+    });
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        curTime = DateTime.now();
+        Services_Room.getRooms(widget.userId.toString()).then((Room1) {
+          setState(() {
+            roomList = Room1;
+            for (Room r in roomList) {
+              if (r.roomId == widget.room.roomId) _room = r;
+            }
+          });
+        });
+        if (timeRest < 0) {
+          setSharedPrefs(false, -1);
+          Services_Room.expireRoom(widget.room);
+          timer.cancel();
+        }
+      });
+    });
   }
 
-  // void dispose() {
-  //   super.dispose();
-  //   timer.cancel();
-  // }
+  void dispose() {
+    super.dispose();
+    timer.cancel();
+  }
 
   getLocation() async {
     double lat = double.parse(widget.room.roomLocationX);
@@ -106,7 +108,7 @@ class _Room_infoState extends State<Room_info> {
 
   MemberList() {
     List<int> userTotalPrice = [];
-    for (List<RoomMemberMenu> rMML in widget.room.roomMemberMenus) {
+    for (List<RoomMemberMenu> rMML in _room.roomMemberMenus) {
       int tmp = 0;
       for (RoomMemberMenu rMM in rMML) {
         tmp += rMM.menuCount * rMM.menuPrice;
@@ -115,7 +117,7 @@ class _Room_infoState extends State<Room_info> {
     }
     return Column(
       children: [
-        for (int i = 0; i < widget.room.roomUser.length; i++)
+        for (int i = 0; i < _room.roomUser.length; i++)
           Container(
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
@@ -134,7 +136,7 @@ class _Room_infoState extends State<Room_info> {
                         height: 50,
                       ),
                       Text(
-                        widget.room.roomUser[i].userNickname,
+                        _room.roomUser[i].userNickname,
                         style: TextStyle(fontSize: 20),
                       ),
                     ],
@@ -327,10 +329,8 @@ class _Room_infoState extends State<Room_info> {
                                 .inSeconds) >
                             0
                         ? (timeRest / 60).toInt().toString() +
-                            "분 " +
-                            (timeRest % 60).toInt().toString() +
-                            "초 " +
-                            "남음"
+                            " : " +
+                            (timeRest % 60).toInt().toString()
                         : "시간 만료",
                     style: TextStyle(fontSize: 20),
                   ),
@@ -366,7 +366,7 @@ class _Room_infoState extends State<Room_info> {
                           width: 5,
                         ),
                         Text(
-                          (widget.room.roomDelFee / widget.room.roomUser.length)
+                          (_room.roomDelFee / _room.roomUser.length)
                               .ceil()
                               .toInt()
                               .toString(),
@@ -412,9 +412,11 @@ class _Room_infoState extends State<Room_info> {
             actions: [
               TextButton(
                   onPressed: () {
+                    setSharedPrefs(false, -1);
                     Services_Room.outRoom(widget.room.roomId.toString(),
                         widget.userId.toString());
                     // DB에 있는 방에도 멤버 삭제
+                    timer.cancel();
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -437,5 +439,11 @@ class _Room_infoState extends State<Room_info> {
             ],
           );
         });
+  }
+
+  void setSharedPrefs(bool isInRoom, int roomId) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isInRoom', isInRoom);
+    prefs.setInt('roomId', roomId);
   }
 }

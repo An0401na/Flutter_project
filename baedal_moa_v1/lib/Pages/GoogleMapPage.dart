@@ -7,6 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../Model/AppUser.dart';
 import 'App.dart';
 
@@ -109,6 +110,8 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
           .then((res) => print(json.decode(res.body.toString())))
           .catchError((e) => print(e.toString()));
       print("서버에 전송한 좌표 : " + lat.toString() + ", " + lon.toString());
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString('curLoc', curLoc);
     } catch (error) {
       print('구글맵 좌표 전송 에러 : ' + error.toString());
     }
