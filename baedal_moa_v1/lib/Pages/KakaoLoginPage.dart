@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:kakao_flutter_sdk/all.dart';
 import 'package:flutter/cupertino.dart';
+import '../Services/Services_User.dart';
 import 'GoogleMapPage.dart';
 import 'App.dart';
 
@@ -87,27 +88,8 @@ class _KakaoLoginPageState extends State<KakaoLoginPage> {
           .catchError((e) => print(e.toString()));
       print('token : ' + token.toString());
       _get_user_info();
-      //_accessTokenExist(); // 이거 왜 실행이 안되냐...ㅠㅠ
     } catch (error) {
       print('에러' + error.toString());
-    }
-  }
-
-  Future<void> _accessTokenExist() async {
-    // 이 아래로 실행 안됨..ㅜㅜ
-    if (await AuthApi.instance.hasToken()) {
-      try {
-        User kakao_user = await UserApi.instance.me();
-        print('존재함');
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => GoogleMapPage(userId: userId),
-            ));
-        _get_user_info();
-      } catch (error) {
-        print('엑세스 토큰 존재 안함 : ' + error.toString());
-      }
     }
   }
 
@@ -129,6 +111,24 @@ class _KakaoLoginPageState extends State<KakaoLoginPage> {
       print('사용자 정보요청 실패' + error.toString());
     }
   }
+
+  // Future<void> _accessTokenExist() async {
+  //   // 이 아래로 실행 안됨..ㅜㅜ
+  //   if (await AuthApi.instance.hasToken()) {
+  //     try {
+  //       User kakao_user = await UserApi.instance.me();
+  //       print('존재함');
+  //       Navigator.push(
+  //           context,
+  //           MaterialPageRoute(
+  //             builder: (context) => GoogleMapPage(userId: userId),
+  //           ));
+  //       _get_user_info();
+  //     } catch (error) {
+  //       print('엑세스 토큰 존재 안함 : ' + error.toString());
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -160,6 +160,6 @@ class _KakaoLoginPageState extends State<KakaoLoginPage> {
   }
 }
 
-// // //https://dev-vlog200ok.tistory.com/25
-// // //https://domdom.tistory.com/entry/flutter-%ED%94%8C%EB%9F%AC%ED%84%B0-%EC%B9%B4%EC%B9%B4%EC%98%A4-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0
-// // //openssl => https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=dntjd207&logNo=220564518845
+//https://dev-vlog200ok.tistory.com/25
+//https://domdom.tistory.com/entry/flutter-%ED%94%8C%EB%9F%AC%ED%84%B0-%EC%B9%B4%EC%B9%B4%EC%98%A4-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0
+//openssl => https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=dntjd207&logNo=220564518845

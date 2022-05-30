@@ -70,18 +70,18 @@ class _Room_ListState extends State<Room_List> {
         _res = Res1;
       });
     });
-    // timer = Timer.periodic(Duration(seconds: 1), (timer) {
-    //   setState(() {
-    //     curTime = DateTime.now();
-    //   });
-    // });
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        curTime = DateTime.now();
+      });
+    });
   }
 
-  // @override
-  // void dispose() {
-  //   super.dispose();
-  //   timer.cancel();
-  // }
+  @override
+  void dispose() {
+    super.dispose();
+    timer.cancel();
+  }
 
   void getLocation(Room room) async {
     double lat = double.parse(room.roomLocationX);
@@ -297,6 +297,26 @@ class _Room_ListState extends State<Room_List> {
                             ],
                           ),
                           onTap: () {
+                            if (room.roomUser.length == room.roomMaxPeople) {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text("방이 가득 찼습니다!"),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text(
+                                              "확인",
+                                              style: TextStyle(
+                                                  color: Colors.deepOrange),
+                                            ))
+                                      ],
+                                    );
+                                  });
+                            }
                             print("참여하기");
                             showDialog(
                               context: context,

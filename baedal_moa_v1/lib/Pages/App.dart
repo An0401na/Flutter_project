@@ -23,6 +23,7 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   late AppUser _user;
   late Icon appBarIcon;
+  bool _drawerIsOpened = false;
   int currentPageIndex = 0;
   Map<String, String> categoryNames = {
     '햄버거': 'burger',
@@ -66,13 +67,6 @@ class _AppState extends State<App> {
             height: 1,
             color: Colors.black,
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              '  아이디 : ' + _user.userId.toString(),
-              style: TextStyle(fontSize: 25),
-            ),
-          ), // 나중에 id로 변경해야함
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
@@ -138,7 +132,6 @@ class _AppState extends State<App> {
   getCategory(String name) {
     return InkWell(
       onTap: () {
-        Fluttertoast.showToast(msg: "카테고리 클릭");
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -179,36 +172,39 @@ class _AppState extends State<App> {
             },
           ),
           title: Text("카테고리"),
-          elevation: 0,
+          elevation: 1,
         ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                getCategory("햄버거"),
-                getCategory("치킨"),
-                getCategory("피자,양식"),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                getCategory("중국집"),
-                getCategory("한식"),
-                getCategory("일식,돈까스"),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                getCategory("족발,보쌈"),
-                getCategory("분식"),
-                getCategory("카페,디저트"),
-              ],
-            )
-          ],
+        body: Container(
+          color: CupertinoColors.secondarySystemBackground,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  getCategory("햄버거"),
+                  getCategory("치킨"),
+                  getCategory("피자,양식"),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  getCategory("중국집"),
+                  getCategory("한식"),
+                  getCategory("일식,돈까스"),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  getCategory("족발,보쌈"),
+                  getCategory("분식"),
+                  getCategory("카페,디저트"),
+                ],
+              )
+            ],
+          ),
         ),
       )),
     );
@@ -323,6 +319,9 @@ class _AppState extends State<App> {
         child: Scaffold(
             appBar: appbarWidget(),
             endDrawer: drawerWidget(context),
+            onEndDrawerChanged: (isOpened) {
+              _drawerIsOpened = !_drawerIsOpened;
+            },
             body: bodyWidget(context),
             floatingActionButton: floatingActionButtonWidget(),
             bottomNavigationBar: bottomNavigationBarWidget()),
@@ -337,9 +336,10 @@ class _AppState extends State<App> {
         ),
       );
     } else if (currentPageIndex == 4) {
+      //프로필 탭
       return WillPopScope(onWillPop: onBackKey, child: profile());
     } else {
-      //나머지 탭 (찜, 주문내역, 프로필)
+      //나머지 탭 (찜, 주문내역)
       return WillPopScope(
         onWillPop: onBackKey,
         child: Scaffold(
@@ -351,6 +351,10 @@ class _AppState extends State<App> {
   }
 
   Future<bool> onBackKey() async {
+    if (_drawerIsOpened) {
+      Navigator.of(context).pop();
+      return false;
+    }
     return await showDialog(
         context: context,
         builder: (BuildContext context) {

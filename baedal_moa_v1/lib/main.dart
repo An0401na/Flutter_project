@@ -9,7 +9,7 @@ import 'Pages/GoogleMapPage.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setEnabledSystemUIOverlays(
       [SystemUiOverlay.bottom, SystemUiOverlay.top]);
   KakaoContext.clientId = "259973fec2ab30fe979de7a40850c394";
@@ -19,7 +19,13 @@ void main() {
 class Splash extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      body: Center(
+          child: Image.asset(
+        'assets/logo.png',
+        width: MediaQuery.of(context).size.width * 0.7,
+      )),
+    );
   }
 }
 
@@ -27,7 +33,7 @@ class Baedal_Moa extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: Future.delayed(Duration(seconds: 2)),
+        future: Future.delayed(Duration(seconds: 3)),
         builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return MaterialApp(home: Splash());
@@ -39,15 +45,7 @@ class Baedal_Moa extends StatelessWidget {
                         backgroundColor: Colors.white,
                         foregroundColor: Colors.deepOrange,
                         titleTextStyle: TextStyle(color: Colors.black))),
-                // home: FlutterNativeSplash(
-                //   splash: Image.asset('assets/logo.png'),
-                //   nextScreen: KakaoLoginPage(),
-                // ),
-                home: KakaoLoginPage()
-                // GoogleMapPage(
-                // userId: 0,
-                // )
-                );
+                home: KakaoLoginPage());
           }
         });
   }
