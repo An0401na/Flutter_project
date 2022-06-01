@@ -12,6 +12,7 @@ import '../Model/Res.dart';
 import '../Model/Menu.dart';
 import '../Model/AppUser.dart';
 import '../Services/Services_Menu.dart';
+import '../Services/Services_Res.dart';
 import 'CartPage.dart';
 
 class Restaurant_info extends StatefulWidget {
@@ -34,8 +35,9 @@ class Restaurant_info extends StatefulWidget {
 class _Restaurant_infoState extends State<Restaurant_info> {
   late List<Menu> _menu = [];
   late ShoppingCart shoppingCart;
-
+  int isLike = 0;
   int menuCnt = 0;
+  late Icon icon;
 
   void initState() {
     super.initState();
@@ -49,6 +51,14 @@ class _Restaurant_infoState extends State<Restaurant_info> {
     Services_Menu.getMenus(widget.res.resId.toString()).then((Menu1) {
       setState(() {
         _menu = Menu1;
+      });
+    });
+
+    Services_Res.isLikeRes(
+            widget.res.resId.toString(), widget.userId.toString())
+        .then((DoLike) {
+      setState(() {
+        isLike = DoLike;
       });
     });
   }
@@ -129,9 +139,6 @@ class _Restaurant_infoState extends State<Restaurant_info> {
                       widget.image,
                       fit: BoxFit.fill,
                     ),
-                    // Image.memory(
-                    //   base64Decode(utf8.decode(widget.res.resImageDir.data)),
-                    // ),
                   ),
                   Container(
                     padding: EdgeInsets.only(left: 15, right: 15, top: 15),
@@ -150,13 +157,27 @@ class _Restaurant_infoState extends State<Restaurant_info> {
                         ),
                         IconButton(
                             onPressed: () {
+                              // Services_Res.likeRes(widget.res.resId.toString(),
+                              //     widget.userId.toString(), isLike);
+                              setState(() {
+                                if (isLike == 0) {
+                                  isLike == 1;
+                                } else
+                                  isLike == 0;
+                              });
                               print("찜하기");
                             },
-                            icon: Icon(
-                              Icons.favorite_border_rounded,
-                              size: 40,
-                              color: Colors.deepOrange,
-                            ))
+                            icon: isLike == 0
+                                ? Icon(
+                                    Icons.favorite_border_rounded,
+                                    size: 40,
+                                    color: Colors.deepOrange,
+                                  )
+                                : Icon(
+                                    Icons.favorite,
+                                    size: 40,
+                                    color: Colors.deepOrange,
+                                  ))
                       ],
                     ),
                   ),

@@ -46,6 +46,20 @@ class _AppState extends State<App> {
     });
   }
 
+  //1. 찜목록
+  Widget likes() {
+    return Scaffold(
+      appBar: AppBar(
+        title: Center(child: Text("나의 프로필")),
+        automaticallyImplyLeading: false,
+        elevation: 1,
+      ),
+      body: ListView(),
+      bottomNavigationBar: bottomNavigationBarWidget(),
+    );
+  }
+
+  //4.프로필
   Widget profile() {
     return Scaffold(
       appBar: AppBar(
@@ -73,14 +87,14 @@ class _AppState extends State<App> {
               '  닉네임 : ' + _user.userNickname,
               style: TextStyle(fontSize: 25),
             ),
-          ), //나중에 name으로 변경해야함
+          ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
               '  포인트 : ' + _user.userCash.toString(),
               style: TextStyle(fontSize: 25),
             ),
-          ), //나중에 cash로 변경해야함
+          ),
         ],
       ),
       bottomNavigationBar: bottomNavigationBarWidget(),
@@ -326,6 +340,9 @@ class _AppState extends State<App> {
             floatingActionButton: floatingActionButtonWidget(),
             bottomNavigationBar: bottomNavigationBarWidget()),
       );
+    } else if (currentPageIndex == 1) {
+      //찜 목록 탭
+      return WillPopScope(onWillPop: onBackKey, child: likes());
     } else if (currentPageIndex == 2) {
       //검색 탭
       return WillPopScope(
@@ -339,7 +356,7 @@ class _AppState extends State<App> {
       //프로필 탭
       return WillPopScope(onWillPop: onBackKey, child: profile());
     } else {
-      //나머지 탭 (찜, 주문내역)
+      //나머지 탭 (주문내역)
       return WillPopScope(
         onWillPop: onBackKey,
         child: Scaffold(
