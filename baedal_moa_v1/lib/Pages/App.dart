@@ -44,6 +44,7 @@ class _AppState extends State<App> {
         _user = User1.first;
       });
     });
+    currentPageIndex = widget.curPageIndex;
   }
 
   PreferredSizeWidget appbarWidget() {
