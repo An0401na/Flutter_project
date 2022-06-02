@@ -66,6 +66,34 @@ class _Room_infoState extends State<Room_info> {
             for (Room r in roomList) {
               if (r.roomId == widget.room.roomId) _room = r;
             }
+            if (_room.roomIsActive == 0) {
+              showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text("주문이 완료되었습니다!"),
+                      actions: [
+                        TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => App(
+                                      userId: widget.userId,
+                                      curLoc: userLoc,
+                                      curPageIndex: 3,
+                                    ),
+                                  ));
+                            },
+                            child: Text(
+                              "확인",
+                              style: TextStyle(color: Colors.deepOrange),
+                            )),
+                      ],
+                    );
+                  });
+            }
           });
         });
         if (timeRest < 0) {
@@ -103,7 +131,7 @@ class _Room_infoState extends State<Room_info> {
                   );
                 });
           } else {
-            Services_Room.expireRoom(widget.room);
+            if (widget.isHost) Services_Room.expireRoom(widget.room);
             showDialog(
                 barrierDismissible: false,
                 context: context,
@@ -471,8 +499,9 @@ class _Room_infoState extends State<Room_info> {
                                           onPressed: () {
                                             getUserLocation();
                                             //주문 들어감
-                                            Services_Room.expireRoom(
-                                                widget.room);
+                                            if (widget.isHost)
+                                              Services_Room.expireRoom(
+                                                  widget.room);
                                             Navigator.pop(context, false);
                                             showDialog(
                                                 barrierDismissible: false,
