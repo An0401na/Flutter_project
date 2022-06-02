@@ -288,6 +288,17 @@ class _Room_infoState extends State<Room_info> {
                                                         zoom: 18.0),
                                                 markers: Set.from(myMarker),
                                               ))),
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: const Text('세부 주소'),
+                                ),
+                                Text(
+                                  (myMarker.isEmpty
+                                      ? 'loading map...'
+                                      : locStr),
+                                  style: TextStyle(fontSize: 20),
+                                  overflow: TextOverflow.visible,
+                                ),
                               ],
                             ),
                           ),
@@ -342,59 +353,81 @@ class _Room_infoState extends State<Room_info> {
       bottomNavigationBar: BottomAppBar(
         child: Container(
           padding: EdgeInsets.all(10),
-          height: 70,
-          child: Row(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                padding: EdgeInsets.all(2),
-                decoration: BoxDecoration(
-                    border: Border.all(
-                        width: 1,
-                        style: BorderStyle.solid,
-                        color: Colors.deepOrange)),
-                child: Container(
-                  padding: EdgeInsets.all(1),
-                  color: Colors.deepOrange,
-                  child: Container(
-                    padding:
-                        EdgeInsets.only(top: 8, bottom: 8, left: 2, right: 2),
-                    color: Colors.white,
+              widget.isHost
+                  ? Padding(
+                      padding: const EdgeInsets.only(bottom: 10.0),
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                            backgroundColor: Colors.deepOrange,
+                            fixedSize: Size(
+                                MediaQuery.of(context).size.width * 0.8, 50)),
+                        child: const Text(
+                          '이대로 주문하기',
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        ),
+                        onPressed: () {
+                          print("방장 주문하기 버튼");
+                        },
+                      ),
+                    )
+                  : Container(),
+              Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            width: 1,
+                            style: BorderStyle.solid,
+                            color: Colors.deepOrange)),
+                    child: Container(
+                      padding: EdgeInsets.all(1),
+                      color: Colors.deepOrange,
+                      child: Container(
+                        padding: EdgeInsets.only(
+                            top: 8, bottom: 8, left: 2, right: 2),
+                        color: Colors.white,
+                        child: Row(
+                          children: [
+                            Text("현재 인당 배달료"),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              (_room.roomDelFee / _room.roomUser.length)
+                                  .ceil()
+                                  .toInt()
+                                  .toString(),
+                              style: TextStyle(color: Colors.deepOrange),
+                            ),
+                            Text("원"),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                      child: Container(
+                    alignment: Alignment.centerRight,
                     child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text("현재 인당 배달료"),
+                        Text("현재 내 포인트"),
                         SizedBox(
                           width: 5,
                         ),
                         Text(
-                          (_room.roomDelFee / _room.roomUser.length)
-                              .ceil()
-                              .toInt()
-                              .toString(),
+                          userList[0].userCash.toString(),
                           style: TextStyle(color: Colors.deepOrange),
-                        ),
-                        Text("원"),
+                        )
                       ],
                     ),
-                  ),
-                ),
+                  ))
+                ],
               ),
-              Expanded(
-                  child: Container(
-                alignment: Alignment.centerRight,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text("현재 내 포인트"),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    Text(
-                      userList[0].userCash.toString(),
-                      style: TextStyle(color: Colors.deepOrange),
-                    )
-                  ],
-                ),
-              ))
             ],
           ),
         ),

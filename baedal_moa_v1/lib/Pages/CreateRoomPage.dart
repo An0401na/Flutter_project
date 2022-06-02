@@ -38,6 +38,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
   int member_count = 2; //모집인원 저장하는 변수
   int time_count = 5; //모집시간 저장하는 변수
   final room_title = TextEditingController(); //TextField 사용하기 위한 변수
+  final address_detail = TextEditingController();
   // 방이름 정보 -> room_title.text에 저장됨
 
   List<Marker> myMarker = [];
@@ -143,17 +144,16 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
 
   void printn() {
     curTime = DateTime.now();
-    // print(new_room.roomUser
-    new_room.roomName = room_title.text.toString();
+    new_room.roomName = room_title.text;
     new_room.resId = widget.res.resId;
     new_room.hostUserId = widget.userId;
-    new_room.roomMaxPeople = member_count.toInt();
+    new_room.roomMaxPeople = member_count;
     new_room.roomStartTime = curTime;
     new_room.roomExpireTime = curTime.add(Duration(minutes: time_count));
     new_room.roomLocationX = myMarker[0].position.latitude.toString();
     new_room.roomLocationY = myMarker[0].position.longitude.toString();
     new_room.roomOrderPrice = widget.shoppingCart.totalPrice;
-    new_room.roomDelFee = widget.res.deliveryFees.last.delFee.toInt();
+    new_room.roomDelFee = widget.res.deliveryFees.last.delFee;
     List<RoomMemberMenu> rMM = [];
     for (Menu m in widget.shoppingCart.menus) {
       rMM.add(RoomMemberMenu(
@@ -321,67 +321,62 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                       ],
                     ),
                   ),
+                  Row(
+                    children: [
+                      Text('모집 인원(명)'),
+                      Row(
+                        children: [
+                          IconButton(
+                            splashRadius: 10,
+                            icon: Icon(Icons.remove),
+                            iconSize: 20,
+                            onPressed: _minus,
+                          ),
+                          Text(
+                            '$member_count',
+                            style: TextStyle(fontSize: 15),
+                          ),
+                          IconButton(
+                            splashRadius: 10,
+                            icon: Icon(Icons.add),
+                            iconSize: 20,
+                            onPressed: _plus,
+                          ),
+                        ],
+                      ),
+                      Text('(최대 5명)'),
+                    ],
+                  ), //모집인원 +-버튼
+                  Row(
+                    children: [
+                      Text('모집 시간(분)'),
+                      Row(
+                        children: [
+                          IconButton(
+                            splashRadius: 10,
+                            icon: Icon(Icons.remove),
+                            iconSize: 20,
+                            onPressed: time_minus,
+                          ),
+                          Text(
+                            '$time_count',
+                            style: TextStyle(fontSize: 15),
+                          ),
+                          IconButton(
+                            splashRadius: 10,
+                            icon: Icon(Icons.add),
+                            iconSize: 20,
+                            onPressed: time_plus,
+                          ),
+                        ],
+                      ),
+                      Text('(최대 30분)'),
+                    ],
+                  ),
                 ],
               ),
             ), //TextField 사용 -> 방제목 입력
-            Padding(
-              padding: const EdgeInsets.only(left: 10.0),
-              child: Row(
-                children: [
-                  Text('모집 인원(명)'),
-                  Row(
-                    children: [
-                      IconButton(
-                        splashRadius: 10,
-                        icon: Icon(Icons.remove),
-                        iconSize: 20,
-                        onPressed: _minus,
-                      ),
-                      Text(
-                        '$member_count',
-                        style: TextStyle(fontSize: 15),
-                      ),
-                      IconButton(
-                        splashRadius: 10,
-                        icon: Icon(Icons.add),
-                        iconSize: 20,
-                        onPressed: _plus,
-                      ),
-                    ],
-                  ),
-                  Text('(최대 5명)'),
-                ],
-              ),
-            ), //모집인원 +-버튼
-            Padding(
-              padding: const EdgeInsets.only(left: 10.0),
-              child: Row(
-                children: [
-                  Text('모집 시간(분)'),
-                  Row(
-                    children: [
-                      IconButton(
-                        splashRadius: 10,
-                        icon: Icon(Icons.remove),
-                        iconSize: 20,
-                        onPressed: time_minus,
-                      ),
-                      Text(
-                        '$time_count',
-                        style: TextStyle(fontSize: 15),
-                      ),
-                      IconButton(
-                        splashRadius: 10,
-                        icon: Icon(Icons.add),
-                        iconSize: 20,
-                        onPressed: time_plus,
-                      ),
-                    ],
-                  ),
-                  Text('(최대 30분)'),
-                ],
-              ),
-            ), // 모집시간 +-버튼 ->5분 단위로 설정함
+            // 모집시간 +-버튼 ->5분 단위로 설정함
             line,
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -427,6 +422,19 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                                         markers: Set.from(myMarker),
                                         onTap: _handleTap,
                                       ))),
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: const Text('세부 주소 입력'),
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          child: TextField(
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                            ),
+                            controller: address_detail, //Textfield넣어야 함
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -452,6 +460,24 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                         builder: (BuildContext context) {
                           return AlertDialog(
                             title: const Text("방 제목을 입력해주세요!"),
+                            actions: [
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    "확인",
+                                    style: TextStyle(color: Colors.deepOrange),
+                                  ))
+                            ],
+                          );
+                        });
+                  } else if (address_detail.text.isEmpty) {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text("세부 주소를 입력해주세요!"),
                             actions: [
                               TextButton(
                                   onPressed: () {

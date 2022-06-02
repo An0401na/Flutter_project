@@ -35,7 +35,7 @@ class Restaurant_info extends StatefulWidget {
 class _Restaurant_infoState extends State<Restaurant_info> {
   late List<Menu> _menu = [];
   late ShoppingCart shoppingCart;
-  int isLike = 0;
+  bool isLiked = false;
   int menuCnt = 0;
   late Icon icon;
 
@@ -54,13 +54,14 @@ class _Restaurant_infoState extends State<Restaurant_info> {
       });
     });
 
-    Services_Res.isLikeRes(
-            widget.res.resId.toString(), widget.userId.toString())
-        .then((DoLike) {
-      setState(() {
-        isLike = DoLike;
-      });
-    });
+    //   Services_Res.isResLiked(
+    //           widget.res.resId.toString(), widget.userId.toString())
+    //       .then((value) {
+    //     setState(() {
+    //       isLiked = value;
+    icon = setIcon(isLiked);
+    //     });
+    //   });
   }
 
   void update(int count) {
@@ -106,11 +107,6 @@ class _Restaurant_infoState extends State<Restaurant_info> {
     double deviceWidth = MediaQuery.of(context).size.width;
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: [SystemUiOverlay.bottom]);
-    if (widget.isHost) {
-      print("방 새로 만드는 경우");
-    } else {
-      print("기존 방 참여");
-    }
     return WillPopScope(
       onWillPop: shoppingCart.menus.isNotEmpty
           ? onBackKey
@@ -155,29 +151,7 @@ class _Restaurant_infoState extends State<Restaurant_info> {
                             overflow: TextOverflow.visible,
                           ),
                         ),
-                        IconButton(
-                            onPressed: () {
-                              // Services_Res.likeRes(widget.res.resId.toString(),
-                              //     widget.userId.toString(), isLike);
-                              setState(() {
-                                if (isLike == 0) {
-                                  isLike == 1;
-                                } else
-                                  isLike == 0;
-                              });
-                              print("찜하기");
-                            },
-                            icon: isLike == 0
-                                ? Icon(
-                                    Icons.favorite_border_rounded,
-                                    size: 40,
-                                    color: Colors.deepOrange,
-                                  )
-                                : Icon(
-                                    Icons.favorite,
-                                    size: 40,
-                                    color: Colors.deepOrange,
-                                  ))
+                        IconButton(onPressed: pressedLikeButton, icon: icon)
                       ],
                     ),
                   ),
@@ -271,6 +245,20 @@ class _Restaurant_infoState extends State<Restaurant_info> {
         });
   }
 
+  Icon setIcon(bool isLiked) {
+    return isLiked
+        ? const Icon(
+            Icons.favorite,
+            size: 40,
+            color: Colors.deepOrange,
+          )
+        : const Icon(
+            Icons.favorite_border,
+            size: 40,
+            color: Colors.deepOrange,
+          );
+  }
+
   MenuList() {
     return Column(
       children: [
@@ -328,5 +316,15 @@ class _Restaurant_infoState extends State<Restaurant_info> {
           )
       ],
     );
+  }
+
+  void pressedLikeButton() {
+    print("찜 버튼 클릭");
+    isLiked = !isLiked;
+    // Services_Res.likedRes(widget.res.resId.toString(),
+    //     widget.userId.toString(), isLiked);
+    setState(() {
+      icon = setIcon(isLiked);
+    });
   }
 }

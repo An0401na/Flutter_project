@@ -63,7 +63,7 @@ class _Baedal_MoaState extends State<Baedal_Moa> {
     return FutureBuilder<StatefulWidget>(
         future: future,
         builder: (context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData == false) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             print("splash");
             return MaterialApp(home: Splash());
           } else if (snapshot.hasData) {

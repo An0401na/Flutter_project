@@ -42,7 +42,8 @@ class Services_Res {
   }
 
   //찜하기 버튼을 눌렀을때 서버에 보낼 정보
-  static Future<void> likeRes(String resId, String userId, int doLike) async {
+  static Future<void> likedRes(
+      String resId, String userId, bool isLiked) async {
     try {
       String __url = 'http://203.249.22.50:8080/like';
       http.post(Uri.parse(__url), headers: <String, String>{
@@ -50,7 +51,7 @@ class Services_Res {
       }, body: {
         "res_id": resId,
         "user_id": userId,
-        "do_like": doLike.toString()
+        "is_liked": isLiked.toString()
         //찜이 안되어 있어서 찜을 하려고 디비에 넣을건지 아니면 찜 취소여서 삭제를 할건지 결정하는 변수
       }).then((res) {
         print("likeRes 상태 코드 : " + res.statusCode.toString());
@@ -61,7 +62,7 @@ class Services_Res {
   }
 
   //사용자가 가게정보페이지에 들어갔을때 찜에 되었는지 확인할 정보
-  static Future<int> isLikeRes(String resId, String userId) async {
+  static Future<bool> isResLiked(String resId, String userId) async {
     try {
       String __url = 'http://203.249.22.50:8080/????';
       final res = await http.post(Uri.parse(__url), headers: <String, String>{
@@ -72,16 +73,36 @@ class Services_Res {
       });
       print("isLikeRes의 상태 코드 : " + res.statusCode.toString());
       if (res.statusCode == 200) {
-        int doLike = jsonDecode(res.body)['????'];
-        //0이면 찜 안함, 1이면 찜
-        print("찜 유무 : " + doLike.toString());
-        return doLike;
+        bool isLiked = jsonDecode(res.body)['????'];
+        print("찜 유무 : " + isLiked.toString());
+        return isLiked;
       } else {
-        return -1;
+        return false;
       }
     } catch (error) {
       print('isLikeRes 에러 : ' + error.toString());
-      return -1;
+      return false;
+    }
+  }
+
+  static Future<bool> getLikedResList(String userId) async {
+    try {
+      String __url = 'http://203.249.22.50:8080/????';
+      final res = await http.post(Uri.parse(__url), headers: <String, String>{
+        'Content-Type': 'application/x-www-form-urlencoded',
+      }, body: {
+        "user_id": userId
+      });
+      print("getLikedResList의 상태 코드 : " + res.statusCode.toString());
+      if (res.statusCode == 200) {
+        bool isLiked = jsonDecode(res.body)['????'];
+        return isLiked;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      print('isLikeRes 에러 : ' + error.toString());
+      return false;
     }
   }
 }
