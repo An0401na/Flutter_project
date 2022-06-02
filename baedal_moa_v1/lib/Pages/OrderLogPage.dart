@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
 class OrderLogPage extends StatefulWidget {
+  int userId;
+  OrderLogPage({
+    Key? key,
+    required this.userId,
+  }) : super(key: key);
   @override
   State<OrderLogPage> createState() => _OrderLogPageState();
 }

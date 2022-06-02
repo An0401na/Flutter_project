@@ -30,15 +30,24 @@ class Restaurant_List extends StatefulWidget {
 class _Restaurant_ListState extends State<Restaurant_List> {
   @override
   late List<Res> _res = [];
-  late bool _loading;
+  Map<String, String> categoryNames = {
+    '햄버거': 'burger',
+    '치킨': 'chicken',
+    '피자,양식': 'pizza',
+    '중국집': 'zzangggae',
+    '한식': 'korea',
+    '일식,돈까스': 'japanese',
+    '족발,보쌈': 'zokbal',
+    '분식': 'bunsik',
+    '카페,디저트': 'cafe'
+  };
 
   @override
   void initState() {
     super.initState();
-    _loading = true;
 
     if (widget.isCategory) {
-      Services_Res.getCats(widget.categoryName).then((Res1) {
+      Services_Res.getCats(categoryNames[widget.categoryName]!).then((Res1) {
         setState(() {
           _res = Res1;
         });
@@ -47,7 +56,6 @@ class _Restaurant_ListState extends State<Restaurant_List> {
       Services_Res.getRests().then((Res1) {
         setState(() {
           _res = Res1;
-          _loading = false;
         });
       });
     }
@@ -57,7 +65,7 @@ class _Restaurant_ListState extends State<Restaurant_List> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(widget.curLoc,
+          title: Text(widget.isCategory ? widget.categoryName : widget.curLoc,
               overflow: TextOverflow.fade,
               style: TextStyle(color: Colors.black)),
           elevation: 1,

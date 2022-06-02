@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
 class LikeList extends StatefulWidget {
+  int userId;
+  LikeList({
+    Key? key,
+    required this.userId,
+  }) : super(key: key);
   @override
   State<LikeList> createState() => _LikeListState();
 }

@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
 class SearchPage extends StatefulWidget {
+  int userId;
+  SearchPage({
+    Key? key,
+    required this.userId,
+  }) : super(key: key);
   @override
   State<SearchPage> createState() => _SearchPageState();
 }
@@ -12,10 +17,28 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
-        title: TextField(
-          decoration: InputDecoration(hintText: '검색어를 입력하세요'),
-          controller: searching,
+        title: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                decoration: InputDecoration(hintText: '검색어를 입력하세요'),
+                controller: searching,
+              ),
+            ),
+            TextButton(
+                onPressed: () {
+                  print("검색");
+                },
+                child: Text(
+                  "검색",
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.deepOrange,
+                ))
+          ],
         ),
         elevation: 1,
       ),

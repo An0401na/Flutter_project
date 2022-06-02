@@ -35,17 +35,7 @@ class _AppState extends State<App> {
   late Icon appBarIcon;
   bool _drawerIsOpened = false;
   int currentPageIndex = 0;
-  Map<String, String> categoryNames = {
-    '햄버거': 'burger',
-    '치킨': 'chicken',
-    '피자,양식': 'pizza',
-    '중국집': 'zzangggae',
-    '한식': 'korea',
-    '일식,돈까스': 'japanese',
-    '족발,보쌈': 'zokbal',
-    '분식': 'bunsik',
-    '카페,디저트': 'cafe'
-  };
+
   @override
   void initState() {
     super.initState();
@@ -108,7 +98,7 @@ class _AppState extends State<App> {
                 curLoc: widget.curLoc,
                 userId: widget.userId,
                 isCategory: true,
-                categoryName: '${categoryNames[name]}',
+                categoryName: name,
               ),
             ));
       },
@@ -184,11 +174,13 @@ class _AppState extends State<App> {
       case 0:
         return Room_List(userId: widget.userId);
       case 1:
-        return LikeList();
+        return LikeList(
+          userId: widget.userId,
+        );
       case 2:
-        return SearchPage();
+        return SearchPage(userId: widget.userId);
       case 3:
-        return OrderLogPage();
+        return OrderLogPage(userId: widget.userId);
       case 4:
         return ProfilePage(
           user: _user,
@@ -299,7 +291,7 @@ class _AppState extends State<App> {
         ),
       );
     } else {
-      //나머지 탭 (주문내역)
+      //나머지 탭
       return WillPopScope(
         onWillPop: onBackKey,
         child: Scaffold(

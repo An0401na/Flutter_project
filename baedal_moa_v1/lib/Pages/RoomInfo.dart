@@ -36,7 +36,7 @@ class _Room_infoState extends State<Room_info> {
   late int timeRest;
   DateTime curTime = DateTime.now();
   List<Marker> myMarker = [];
-  List<int> userTotalPrice = [];
+  int roomTotalMenuPrice = 0;
 
   @override
   void initState() {
@@ -69,9 +69,66 @@ class _Room_infoState extends State<Room_info> {
           });
         });
         if (timeRest < 0) {
-          setSharedPrefs(false, -1);
-          Services_Room.expireRoom(widget.room);
           timer.cancel();
+          setSharedPrefs(false, -1);
+          getUserLocation();
+          if (roomTotalMenuPrice < _room.res.resMinOrderPrice) {
+            Services_Room.outRoom(
+                widget.room.roomId.toString(), widget.userId.toString());
+            // // DB에 있는 방에도 멤버 삭제
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text("최소 주문 금액 미달로 주문을 실패하였습니다..."),
+                    actions: [
+                      TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => App(
+                                    userId: widget.userId,
+                                    curLoc: userLoc,
+                                    curPageIndex: 0,
+                                  ),
+                                ));
+                          },
+                          child: Text(
+                            "확인",
+                            style: TextStyle(color: Colors.deepOrange),
+                          )),
+                    ],
+                  );
+                });
+          } else {
+            Services_Room.expireRoom(widget.room);
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text("주문이 완료되었습니다!"),
+                    actions: [
+                      TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => App(
+                                    userId: widget.userId,
+                                    curLoc: userLoc,
+                                    curPageIndex: 3,
+                                  ),
+                                ));
+                          },
+                          child: Text(
+                            "확인",
+                            style: TextStyle(color: Colors.deepOrange),
+                          )),
+                    ],
+                  );
+                });
+          }
         }
       });
     });
@@ -108,12 +165,15 @@ class _Room_infoState extends State<Room_info> {
   }
 
   MemberList() {
+    roomTotalMenuPrice = 0;
+    List<int> temp = [];
     for (List<RoomMemberMenu> rMML in _room.roomMemberMenus) {
       int tmp = 0;
       for (RoomMemberMenu rMM in rMML) {
         tmp += rMM.menuCount * rMM.menuPrice;
       }
-      userTotalPrice.add(tmp);
+      temp.add(tmp);
+      roomTotalMenuPrice += tmp;
     }
     return Column(
       children: [
@@ -142,7 +202,7 @@ class _Room_infoState extends State<Room_info> {
                     ],
                   ),
                   Text(
-                    "주문 금액 : " + userTotalPrice[i].toString() + " 원 ",
+                    "주문 금액 : " + temp[i].toString() + " 원 ",
                     style: TextStyle(fontSize: 20),
                   )
                 ]),
@@ -244,8 +304,7 @@ class _Room_infoState extends State<Room_info> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(
-                              top: 10, left: 10.0, bottom: 10),
+                          padding: const EdgeInsets.only(top: 10, left: 10.0),
                           child: Text(
                             '음식 받을 곳',
                             style: TextStyle(
@@ -308,14 +367,24 @@ class _Room_infoState extends State<Room_info> {
                   ),
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.only(
-                      top: 10,
-                      left: 10.0,
-                    ),
-                    child: Text(
-                      '현재 멤버',
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                    padding:
+                        const EdgeInsets.only(top: 10, left: 10.0, right: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '현재 멤버',
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.w600),
+                        ),
+                        Text(
+                          '현재 총 주문 금액 : ' +
+                              roomTotalMenuPrice.toString() +
+                              ' 원',
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.w600),
+                        )
+                      ],
                     ),
                   ),
                   MemberList(),
@@ -370,11 +439,7 @@ class _Room_infoState extends State<Room_info> {
                         ),
                         onPressed: () {
                           print("방장 주문하기 버튼");
-                          int totalPrice = 0;
-                          for (int i in userTotalPrice) {
-                            totalPrice += i;
-                          }
-                          if (totalPrice < _room.res.resMinOrderPrice) {
+                          if (roomTotalMenuPrice < _room.res.resMinOrderPrice) {
                             showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -394,7 +459,69 @@ class _Room_infoState extends State<Room_info> {
                                   );
                                 });
                           } else {
-                            //주문 들어감
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("이대로 주문 하시겠습니까?"),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () {
+                                            //주문 들어감
+                                            Services_Room.expireRoom(
+                                                widget.room);
+                                            Navigator.pop(context, false);
+                                            showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return AlertDialog(
+                                                    title: Text("주문이 완료되었습니다!"),
+                                                    actions: [
+                                                      TextButton(
+                                                          onPressed: () {
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          App(
+                                                                    userId: widget
+                                                                        .userId,
+                                                                    curLoc:
+                                                                        userLoc,
+                                                                    curPageIndex:
+                                                                        3,
+                                                                  ),
+                                                                ));
+                                                          },
+                                                          child: Text(
+                                                            "확인",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .deepOrange),
+                                                          )),
+                                                    ],
+                                                  );
+                                                });
+                                          },
+                                          child: Text(
+                                            "확인",
+                                            style: TextStyle(
+                                                color: Colors.deepOrange),
+                                          )),
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context, false);
+                                          },
+                                          child: Text(
+                                            "취소",
+                                            style: TextStyle(
+                                                color: Colors.deepOrange),
+                                          )),
+                                    ],
+                                  );
+                                });
                           }
                         },
                       ),
