@@ -63,11 +63,16 @@ class _Room_infoState extends State<Room_info> {
         Services_Room.getRooms(widget.userId.toString()).then((Room1) {
           setState(() {
             roomList = Room1;
+            _room.roomIsActive = 0;
             for (Room r in roomList) {
-              if (r.roomId == widget.room.roomId) _room = r;
+              if (r.roomId == widget.room.roomId) {
+                _room = r;
+                break;
+              }
             }
             print("방 활성화 상태:" + _room.roomIsActive.toString());
             if (_room.roomIsActive == 0) {
+              getUserLocation();
               showDialog(
                   barrierDismissible: false,
                   context: context,

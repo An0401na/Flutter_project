@@ -110,9 +110,11 @@ class _Baedal_MoaState extends State<Baedal_Moa> {
       print("방");
       final Room1 = await Services_Room.getRooms(userId.toString());
       List<Room> roomList = Room1;
+      room.roomIsActive = 0;
       for (Room r in roomList) {
         if (r.roomId == roomId) {
           room = r;
+          break;
         }
       }
       if (userId == room.hostUserId) {
