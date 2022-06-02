@@ -79,7 +79,7 @@ class _OrderLogPageState extends State<OrderLogPage> {
             Text('주문 번호 : ' + orderLogList[i]!.orderId.toString()),
             for (OrderedMenu om in orderLogList[i]!.menuList)
               Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10),
+                padding: const EdgeInsets.only(left: 70, right: 70),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -88,7 +88,16 @@ class _OrderLogPageState extends State<OrderLogPage> {
                   ],
                 ),
               ),
-            Text('배달비 : ' + orderLogList[i]!.orderDelfee.toString() + ' 원'),
+            Padding(
+              padding: const EdgeInsets.only(left: 70, right: 70),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('배달비'),
+                  Text(orderLogList[i]!.orderDelfee.toString() + ' 원')
+                ],
+              ),
+            ),
             Text('총 결제 금액 : ' + orderLogList[i]!.totalPrice.toString() + ' 원'),
             Text('주문 완료 시간 : ' +
                 DateFormat('yyyy-MM-dd hh:mm')
