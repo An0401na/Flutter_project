@@ -18,7 +18,7 @@ class Order {
     required this.menuCount,
     required this.resName,
     required this.roomExpireTime,
-    required this.roomDelFee,
+    required this.userDelFee,
   });
 
   int roomId;
@@ -27,7 +27,7 @@ class Order {
   int menuCount;
   String resName;
   DateTime roomExpireTime;
-  int roomDelFee;
+  int userDelFee;
 
   factory Order.fromJson(Map<String, dynamic> json) => Order(
         roomId: json["room_id"],
@@ -36,7 +36,7 @@ class Order {
         menuCount: json["menu_count"],
         resName: json["res_id"],
         roomExpireTime: DateTime.parse(json["room_expire_time"]),
-        roomDelFee: json["room_del_fee"],
+        userDelFee: json["user_del_fee"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -46,6 +46,6 @@ class Order {
         "menu_count": menuCount,
         "res_id": resName,
         "room_expire_time": roomExpireTime.toIso8601String(),
-        "room_del_fee": roomDelFee,
+        "user_del_fee": userDelFee,
       };
 }

@@ -63,8 +63,8 @@ class _OrderLogPageState extends State<OrderLogPage> {
                     menuName: o.menuName,
                     menuCount: o.menuCount)
               ],
-              totalPrice: o.menuCount * o.menuPrice + o.roomDelFee,
-              orderDelfee: o.roomDelFee)
+              totalPrice: o.menuCount * o.menuPrice + o.userDelFee,
+              orderDelfee: o.userDelFee)
         });
       }
     }
@@ -73,8 +73,7 @@ class _OrderLogPageState extends State<OrderLogPage> {
         Column(
           children: [
             Text(
-              //o.resName,
-              '롯데리아 경기대역점',
+              orderLogList[i]!.resName,
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Text('주문 번호 : ' + orderLogList[i]!.orderId.toString()),

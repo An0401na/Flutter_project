@@ -73,6 +73,7 @@ class _Room_infoState extends State<Room_info> {
             print("방 활성화 상태:" + _room.roomIsActive.toString());
             if (_room.roomIsActive == 0) {
               getUserLocation();
+              getUserLocation();
               showDialog(
                   barrierDismissible: false,
                   context: context,
@@ -138,6 +139,7 @@ class _Room_infoState extends State<Room_info> {
                   );
                 });
           } else {
+            timer.cancel();
             if (widget.isHost) Services_Room.expireRoom(widget.room);
             showDialog(
                 barrierDismissible: false,
