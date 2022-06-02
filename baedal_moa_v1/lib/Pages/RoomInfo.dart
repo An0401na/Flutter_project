@@ -77,6 +77,7 @@ class _Room_infoState extends State<Room_info> {
                 widget.room.roomId.toString(), widget.userId.toString());
             // // DB에 있는 방에도 멤버 삭제
             showDialog(
+                barrierDismissible: false,
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
@@ -104,6 +105,7 @@ class _Room_infoState extends State<Room_info> {
           } else {
             Services_Room.expireRoom(widget.room);
             showDialog(
+                barrierDismissible: false,
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
@@ -467,11 +469,13 @@ class _Room_infoState extends State<Room_info> {
                                     actions: [
                                       TextButton(
                                           onPressed: () {
+                                            getUserLocation();
                                             //주문 들어감
                                             Services_Room.expireRoom(
                                                 widget.room);
                                             Navigator.pop(context, false);
                                             showDialog(
+                                                barrierDismissible: false,
                                                 context: context,
                                                 builder:
                                                     (BuildContext context) {
