@@ -302,7 +302,7 @@ class _Room_ListState extends State<Room_List> {
                                   context: context,
                                   builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: Text("이미 만료된 방입니다!"),
+                                      title: const Text("존재하지 않는 방입니다!"),
                                       actions: [
                                         TextButton(
                                             onPressed: () {

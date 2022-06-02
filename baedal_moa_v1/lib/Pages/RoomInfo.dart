@@ -36,6 +36,7 @@ class _Room_infoState extends State<Room_info> {
   late int timeRest;
   DateTime curTime = DateTime.now();
   List<Marker> myMarker = [];
+  List<int> userTotalPrice = [];
 
   @override
   void initState() {
@@ -107,7 +108,6 @@ class _Room_infoState extends State<Room_info> {
   }
 
   MemberList() {
-    List<int> userTotalPrice = [];
     for (List<RoomMemberMenu> rMML in _room.roomMemberMenus) {
       int tmp = 0;
       for (RoomMemberMenu rMM in rMML) {
@@ -370,6 +370,32 @@ class _Room_infoState extends State<Room_info> {
                         ),
                         onPressed: () {
                           print("방장 주문하기 버튼");
+                          int totalPrice = 0;
+                          for (int i in userTotalPrice) {
+                            totalPrice += i;
+                          }
+                          if (totalPrice < _room.res.resMinOrderPrice) {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("최소 주문 금액을 달성해주세요!"),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context, false);
+                                          },
+                                          child: Text(
+                                            "확인",
+                                            style: TextStyle(
+                                                color: Colors.deepOrange),
+                                          )),
+                                    ],
+                                  );
+                                });
+                          } else {
+                            //주문 들어감
+                          }
                         },
                       ),
                     )
@@ -453,8 +479,11 @@ class _Room_infoState extends State<Room_info> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              App(userId: widget.userId, curLoc: userLoc),
+                          builder: (context) => App(
+                            userId: widget.userId,
+                            curLoc: userLoc,
+                            curPageIndex: 0,
+                          ),
                         ));
                   },
                   child: Text(

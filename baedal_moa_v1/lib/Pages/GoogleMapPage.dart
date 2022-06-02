@@ -182,8 +182,11 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  App(userId: widget.userId, curLoc: curLoc),
+                              builder: (context) => App(
+                                userId: widget.userId,
+                                curLoc: curLoc,
+                                curPageIndex: 0,
+                              ),
                             ))
                       }
                   },

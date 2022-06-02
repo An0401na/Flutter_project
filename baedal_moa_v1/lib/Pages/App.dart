@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:baedal_moa/Pages/GoogleMapPage.dart';
+import 'package:baedal_moa/Pages/LikeList.dart';
+import 'package:baedal_moa/Pages/OrderLogPage.dart';
 import 'package:baedal_moa/Services/Services_User.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -9,13 +11,21 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../Model/AppUser.dart';
+import 'ProfilePage.dart';
 import 'RestaurantList.dart';
 import 'RoomList.dart';
+import 'SearchPage.dart';
 
 class App extends StatefulWidget {
   int userId;
   late String curLoc;
-  App({Key? key, required this.userId, required this.curLoc}) : super(key: key);
+  int curPageIndex;
+  App(
+      {Key? key,
+      required this.userId,
+      required this.curLoc,
+      required this.curPageIndex})
+      : super(key: key);
   @override
   State<App> createState() => _AppState();
 }
@@ -44,61 +54,6 @@ class _AppState extends State<App> {
         _user = User1.first;
       });
     });
-  }
-
-  //1. 찜목록
-  Widget likes() {
-    return Scaffold(
-      appBar: AppBar(
-        title: Center(child: Text("나의 프로필")),
-        automaticallyImplyLeading: false,
-        elevation: 1,
-      ),
-      body: ListView(),
-      bottomNavigationBar: bottomNavigationBarWidget(),
-    );
-  }
-
-  //4.프로필
-  Widget profile() {
-    return Scaffold(
-      appBar: AppBar(
-        title: Center(child: Text("나의 프로필")),
-        automaticallyImplyLeading: false,
-        elevation: 1,
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(
-            child: Image.asset(
-              "assets/images/user.png",
-              fit: BoxFit.fill,
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(bottom: 8),
-            height: 1,
-            color: Colors.black,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              '  닉네임 : ' + _user.userNickname,
-              style: TextStyle(fontSize: 25),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              '  포인트 : ' + _user.userCash.toString(),
-              style: TextStyle(fontSize: 25),
-            ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: bottomNavigationBarWidget(),
-    );
   }
 
   PreferredSizeWidget appbarWidget() {
@@ -225,27 +180,21 @@ class _AppState extends State<App> {
   }
 
   Widget bodyWidget(BuildContext context) {
-    String contents = "";
     switch (currentPageIndex) {
       case 0:
         return Room_List(userId: widget.userId);
       case 1:
-        contents = "찜 목록";
-        break;
+        return LikeList();
       case 2:
-        contents = "검색 화면";
-        break;
+        return SearchPage();
       case 3:
-        contents = "주문 내역";
-        break;
+        return OrderLogPage();
       case 4:
-        contents = "프로필 화면";
-        break;
+        return ProfilePage(
+          user: _user,
+        );
     }
-    return Center(
-        child: Text(
-      contents,
-    ));
+    return Container();
   }
 
   // 하단의 + 버튼
@@ -340,9 +289,6 @@ class _AppState extends State<App> {
             floatingActionButton: floatingActionButtonWidget(),
             bottomNavigationBar: bottomNavigationBarWidget()),
       );
-    } else if (currentPageIndex == 1) {
-      //찜 목록 탭
-      return WillPopScope(onWillPop: onBackKey, child: likes());
     } else if (currentPageIndex == 2) {
       //검색 탭
       return WillPopScope(
@@ -352,9 +298,6 @@ class _AppState extends State<App> {
           bottomNavigationBar: bottomNavigationBarWidget(),
         ),
       );
-    } else if (currentPageIndex == 4) {
-      //프로필 탭
-      return WillPopScope(onWillPop: onBackKey, child: profile());
     } else {
       //나머지 탭 (주문내역)
       return WillPopScope(

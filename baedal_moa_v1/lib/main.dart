@@ -122,13 +122,15 @@ class _Baedal_MoaState extends State<Baedal_Moa> {
         print("멤버");
       }
       if (room.roomIsActive == 1) {
-        print("여기");
         prefs.setBool('isInRoom', false);
         prefs.remove('roomId');
         return Room_info(isHost: isHost, room: room, userId: userId);
       }
     }
-    print("여기?");
-    return App(userId: userId, curLoc: curLoc);
+    return App(
+      userId: userId,
+      curLoc: curLoc,
+      curPageIndex: 0,
+    );
   }
 }
