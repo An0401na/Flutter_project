@@ -72,7 +72,7 @@ class _Room_infoState extends State<Room_info> {
             }
             print("방 활성화 상태:" + _room.roomIsActive.toString());
             if (_room.roomIsActive == 0) {
-              getUserLocation();
+              timer.cancel();
               getUserLocation();
               showDialog(
                   barrierDismissible: false,

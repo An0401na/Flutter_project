@@ -64,7 +64,7 @@ class Services_Res {
   //사용자가 가게정보페이지에 들어갔을때 찜에 되었는지 확인할 정보
   static Future<bool> isResLiked(String resId, String userId) async {
     try {
-      String __url = 'http://203.249.22.50:8080/????';
+      String __url = 'http://203.249.22.50:8080/like';
       final res = await http.post(Uri.parse(__url), headers: <String, String>{
         'Content-Type': 'application/x-www-form-urlencoded',
       }, body: {
@@ -87,7 +87,7 @@ class Services_Res {
 
   static Future<bool> getLikedResList(String userId) async {
     try {
-      String __url = 'http://203.249.22.50:8080/????';
+      String __url = 'http://203.249.22.50:8080/like';
       final res = await http.post(Uri.parse(__url), headers: <String, String>{
         'Content-Type': 'application/x-www-form-urlencoded',
       }, body: {
