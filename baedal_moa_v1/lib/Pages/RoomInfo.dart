@@ -66,6 +66,7 @@ class _Room_infoState extends State<Room_info> {
             for (Room r in roomList) {
               if (r.roomId == widget.room.roomId) _room = r;
             }
+            print("방 활성화 상태:" + _room.roomIsActive.toString());
             if (_room.roomIsActive == 0) {
               showDialog(
                   barrierDismissible: false,
@@ -76,6 +77,7 @@ class _Room_infoState extends State<Room_info> {
                       actions: [
                         TextButton(
                             onPressed: () {
+                              timer.cancel();
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -513,6 +515,7 @@ class _Room_infoState extends State<Room_info> {
                                                     actions: [
                                                       TextButton(
                                                           onPressed: () {
+                                                            timer.cancel();
                                                             Navigator.push(
                                                                 context,
                                                                 MaterialPageRoute(

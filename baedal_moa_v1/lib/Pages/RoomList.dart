@@ -38,12 +38,11 @@ class _Room_ListState extends State<Room_List> {
   RefreshController refreshController = RefreshController(initialRefresh: true);
 
   void onRefresh() async {
-    print("onRefresh");
-    Fluttertoast.showToast(
-      msg: "방 새로고침 됨",
-      gravity: ToastGravity.CENTER,
-      backgroundColor: Colors.grey,
-    );
+    // Fluttertoast.showToast(
+    //   msg: "방 새로고침 됨",
+    //   gravity: ToastGravity.CENTER,
+    //   backgroundColor: Colors.grey,
+    // );
     Services_Room.getRooms(widget.userId.toString()).then((Room1) {
       setState(() {
         _room = Room1;
