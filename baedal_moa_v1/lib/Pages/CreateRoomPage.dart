@@ -7,6 +7,8 @@ import 'package:baedal_moa/Services/Services_Room.dart';
 import 'package:baedal_moa/Services/Services_ShoppingCart.dart';
 import 'package:baedal_moa/Services/Services_User.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -47,10 +49,13 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
   double lon = 0;
 
   getLocation() async {
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    lat = position.latitude;
-    lon = position.longitude;
+    List<AppUser> User1 =
+        await Services_User.getUsers(widget.userId.toString());
+    userList = User1;
+    // Position position = await Geolocator.getCurrentPosition(
+    //     desiredAccuracy: LocationAccuracy.high);
+    lat = double.parse(userList[0].userLocationX);
+    lon = double.parse(userList[0].userLocationY);
     setState(() {
       myMarker
           .add(Marker(markerId: MarkerId("first"), position: LatLng(lat, lon)));
@@ -83,7 +88,6 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
   @override
   void initState() {
     super.initState();
-    getLocation();
 
     new_room = Room(
       roomId: 0,
@@ -103,11 +107,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
       res: RoomRes(resId: 0, resName: '', resLocation: '', resMinOrderPrice: 0),
     );
 
-    Services_User.getUsers(widget.userId.toString()).then((User1) {
-      setState(() {
-        userList = User1;
-      });
-    });
+    getLocation();
   }
 
   void _plus() {
@@ -416,6 +416,14 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                                     ? const Center(
                                         child: Text("loading map..."))
                                     : GoogleMap(
+                                        gestureRecognizers: <
+                                            Factory<
+                                                OneSequenceGestureRecognizer>>[
+                                          new Factory<
+                                              OneSequenceGestureRecognizer>(
+                                            () => new EagerGestureRecognizer(),
+                                          ),
+                                        ].toSet(),
                                         initialCameraPosition: CameraPosition(
                                             target: myMarker.first.position,
                                             zoom: 18.0),

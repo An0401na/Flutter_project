@@ -391,12 +391,17 @@ class _Room_infoState extends State<Room_info> {
                                   child: const Text('세부 주소'),
                                 ),
                                 Text(
-                                  (myMarker.isEmpty
-                                      ? 'loading map...'
-                                      : locStr),
+                                  "8강의동 앞 정자",
                                   style: TextStyle(fontSize: 20),
                                   overflow: TextOverflow.visible,
-                                ),
+                                )
+                                // Text(
+                                //   (myMarker.isEmpty
+                                //       ? 'loading map...'
+                                //       : locStr),
+                                //   style: TextStyle(fontSize: 20),
+                                //   overflow: TextOverflow.visible,
+                                // ),
                               ],
                             ),
                           ),
