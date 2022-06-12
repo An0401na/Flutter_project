@@ -47,7 +47,8 @@ class Services_Room {
         "room_location_y": room.roomLocationY.toString(),
         "room_order_price": room.roomOrderPrice.toString(),
         "room_del_fee": room.roomDelFee.toString(),
-        "room_member_menus": jsonEncode(room.roomMemberMenus).toString()
+        "room_member_menus": jsonEncode(room.roomMemberMenus).toString(),
+        "address": room.address
       });
       print("room_postRoom의 상태 코드 : " + res.statusCode.toString());
       if (res.statusCode == 200) {

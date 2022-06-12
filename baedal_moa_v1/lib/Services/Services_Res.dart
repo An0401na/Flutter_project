@@ -10,11 +10,9 @@ class Services_Res {
   static Future<List<Res>> getRests() async {
     try {
       final response = await http.get(Uri.parse(url));
+      print(response.body);
       if (200 == response.statusCode) {
         final List<Res> Res1 = resFromJson(response.body);
-        // for (int i = 0; i < Res1.length; i++) {
-        //   print("가게 : " + Res1[i].resLocation);
-        // }
         return Res1;
       } else {
         print('Restaurant empty');
@@ -29,6 +27,7 @@ class Services_Res {
     try {
       String __url = 'http://203.249.22.50:8080/category/${category}';
       final response = await http.get(Uri.parse(__url));
+      print(response.body);
       if (200 == response.statusCode) {
         final List<Res> Res1 = resFromJson(response.body);
         return Res1;
@@ -45,64 +44,67 @@ class Services_Res {
   static Future<void> likedRes(
       String resId, String userId, bool isLiked) async {
     try {
-      String __url = 'http://203.249.22.50:8080/like';
+      String __url = 'http://203.249.22.50:8080/like/update';
       http.post(Uri.parse(__url), headers: <String, String>{
         'Content-Type': 'application/x-www-form-urlencoded',
       }, body: {
         "res_id": resId,
         "user_id": userId,
-        "is_liked": isLiked.toString()
+        "is_like": isLiked.toString()
         //찜이 안되어 있어서 찜을 하려고 디비에 넣을건지 아니면 찜 취소여서 삭제를 할건지 결정하는 변수
       }).then((res) {
-        print("likeRes 상태 코드 : " + res.statusCode.toString());
+        print("likedRes 상태 코드 : " + res.statusCode.toString());
       }).catchError((error) => print("likeRes 에러 : " + error.toString()));
     } catch (error) {
-      print('likeRes 에러 : ' + error.toString());
+      print('likedRes 에러 : ' + error.toString());
     }
   }
 
-  //사용자가 가게정보페이지에 들어갔을때 찜에 되었는지 확인할 정보
-  static Future<bool> isResLiked(String resId, String userId) async {
+  static Future<List<Res>> getLikedResList(String userId) async {
     try {
-      String __url = 'http://203.249.22.50:8080/like';
-      final res = await http.post(Uri.parse(__url), headers: <String, String>{
-        'Content-Type': 'application/x-www-form-urlencoded',
-      }, body: {
-        "res_id": resId,
-        "user_id": userId
-      });
-      print("isLikeRes의 상태 코드 : " + res.statusCode.toString());
-      if (res.statusCode == 200) {
-        bool isLiked = jsonDecode(res.body)['????'];
-        print("찜 유무 : " + isLiked.toString());
-        return isLiked;
-      } else {
-        return false;
-      }
-    } catch (error) {
-      print('isLikeRes 에러 : ' + error.toString());
-      return false;
-    }
-  }
-
-  static Future<bool> getLikedResList(String userId) async {
-    try {
-      String __url = 'http://203.249.22.50:8080/like';
-      final res = await http.post(Uri.parse(__url), headers: <String, String>{
+      String __url = 'http://203.249.22.50:8080/like/get';
+      final response =
+          await http.post(Uri.parse(__url), headers: <String, String>{
         'Content-Type': 'application/x-www-form-urlencoded',
       }, body: {
         "user_id": userId
       });
-      print("getLikedResList의 상태 코드 : " + res.statusCode.toString());
-      if (res.statusCode == 200) {
-        bool isLiked = jsonDecode(res.body)['????'];
-        return isLiked;
+      print("getLikedResList의 상태 코드 : " + response.statusCode.toString());
+      print(response.body);
+      if (response.statusCode == 200) {
+        final List<Res> Res1 = resFromJson(response.body);
+        return Res1;
       } else {
-        return false;
+        print("restaurant empty");
+        return [];
       }
     } catch (error) {
-      print('isLikeRes 에러 : ' + error.toString());
-      return false;
+      print('getLikedResList 에러 : ' + error.toString());
+      return [];
+    }
+  }
+
+  static Future<List<Res>> getSearchRes(String keyword) async {
+    try {
+      String __url = 'http://203.249.22.50:8080/reslist/search';
+      final response =
+          await http.post(Uri.parse(__url), headers: <String, String>{
+        'Content-Type': 'application/x-www-form-urlencoded',
+      }, body: {
+        "keyword": keyword
+      });
+      print("getSearchRes의 상태 코드 : " + response.statusCode.toString());
+      print(response.body);
+      if (response.statusCode == 200) {
+        final List<Res> Res1 = resFromJson(response.body);
+        return Res1;
+      } else {
+        print("restaurant empty");
+        return [];
+      }
+    } catch (error) {
+      print('getSearchRes 에러 : ' + error.toString());
+      return [];
     }
   }
 }

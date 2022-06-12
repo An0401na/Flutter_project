@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:baedal_moa/Pages/GoogleMapPage.dart';
-import 'package:baedal_moa/Pages/LikeList.dart';
 import 'package:baedal_moa/Pages/OrderLogPage.dart';
 import 'package:baedal_moa/Services/Services_User.dart';
 import 'package:flutter/cupertino.dart';
@@ -70,9 +69,6 @@ class _AppState extends State<App> {
           ),
           elevation: 1,
         );
-      case 1:
-        currentTitle = "찜 목록";
-        break;
       case 3:
         currentTitle = "주문 내역";
         break;
@@ -99,6 +95,7 @@ class _AppState extends State<App> {
                 curLoc: widget.curLoc,
                 userId: widget.userId,
                 isCategory: true,
+                isLike: false,
                 categoryName: name,
               ),
             ));
@@ -175,9 +172,12 @@ class _AppState extends State<App> {
       case 0:
         return Room_List(userId: widget.userId);
       case 1:
-        return LikeList(
-          userId: widget.userId,
-        );
+        return Restaurant_List(
+            userId: widget.userId,
+            curLoc: widget.curLoc,
+            isCategory: false,
+            categoryName: '',
+            isLike: true);
       case 2:
         return SearchPage(userId: widget.userId);
       case 3:
@@ -231,6 +231,7 @@ class _AppState extends State<App> {
                                 curLoc: widget.curLoc,
                                 userId: widget.userId,
                                 isCategory: false,
+                                isLike: false,
                                 categoryName: '',
                               ),
                             ));
@@ -246,7 +247,7 @@ class _AppState extends State<App> {
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
       onTap: (int index) {
-        print(index);
+        print('현재 탭 : ' + index.toString());
         setState(() {
           currentPageIndex = index;
         });
@@ -282,8 +283,8 @@ class _AppState extends State<App> {
             floatingActionButton: floatingActionButtonWidget(),
             bottomNavigationBar: bottomNavigationBarWidget()),
       );
-    } else if (currentPageIndex == 2) {
-      //검색 탭
+    } else if (currentPageIndex == 1 || currentPageIndex == 2) {
+      //찜 목록, 검색 탭
       return WillPopScope(
         onWillPop: onBackKey,
         child: Scaffold(

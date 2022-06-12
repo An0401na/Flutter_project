@@ -34,6 +34,7 @@ class Restaurant_info extends StatefulWidget {
 
 class _Restaurant_infoState extends State<Restaurant_info> {
   late List<Menu> _menu = [];
+  late List<Res> _res = [];
   late ShoppingCart shoppingCart;
   bool isLiked = false;
   int menuCnt = 0;
@@ -53,15 +54,15 @@ class _Restaurant_infoState extends State<Restaurant_info> {
         _menu = Menu1;
       });
     });
-
-    //   Services_Res.isResLiked(
-    //           widget.res.resId.toString(), widget.userId.toString())
-    //       .then((value) {
-    //     setState(() {
-    //       isLiked = value;
-    icon = setIcon(isLiked);
-    //     });
-    //   });
+    Services_Res.getLikedResList(widget.userId.toString()).then((Res1) {
+      setState(() {
+        _res = Res1;
+        for (Res r in _res) {
+          if (r.resId == widget.res.resId) isLiked = true;
+        }
+        icon = setIcon(isLiked);
+      });
+    });
   }
 
   void update(int count) {
@@ -321,8 +322,8 @@ class _Restaurant_infoState extends State<Restaurant_info> {
   void pressedLikeButton() {
     print("찜 버튼 클릭");
     isLiked = !isLiked;
-    // Services_Res.likedRes(widget.res.resId.toString(),
-    //     widget.userId.toString(), isLiked);
+    Services_Res.likedRes(
+        widget.res.resId.toString(), widget.userId.toString(), isLiked);
     setState(() {
       icon = setIcon(isLiked);
     });

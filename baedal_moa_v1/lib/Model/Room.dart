@@ -11,23 +11,23 @@ String roomToJson(List<Room> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class Room {
-  Room({
-    required this.roomId,
-    required this.roomName,
-    required this.resId,
-    required this.hostUserId,
-    required this.roomMaxPeople,
-    required this.roomStartTime,
-    required this.roomExpireTime,
-    required this.roomLocationX,
-    required this.roomLocationY,
-    required this.roomOrderPrice,
-    required this.roomDelFee,
-    required this.roomIsActive,
-    required this.roomUser,
-    required this.roomMemberMenus,
-    required this.res,
-  });
+  Room(
+      {required this.roomId,
+      required this.roomName,
+      required this.resId,
+      required this.hostUserId,
+      required this.roomMaxPeople,
+      required this.roomStartTime,
+      required this.roomExpireTime,
+      required this.roomLocationX,
+      required this.roomLocationY,
+      required this.roomOrderPrice,
+      required this.roomDelFee,
+      required this.roomIsActive,
+      required this.roomUser,
+      required this.roomMemberMenus,
+      required this.res,
+      required this.address});
 
   int roomId;
   String roomName;
@@ -44,6 +44,7 @@ class Room {
   List<RoomUser> roomUser;
   List<List<RoomMemberMenu>> roomMemberMenus;
   RoomRes res;
+  String address;
 
   factory Room.fromJson(Map<String, dynamic> json) => Room(
         roomId: json["room_id"],
@@ -64,6 +65,7 @@ class Room {
             json["room_member_menus"].map((x) => List<RoomMemberMenu>.from(
                 x.map((x) => RoomMemberMenu.fromJson(x))))),
         res: RoomRes.fromJson(json["res"]),
+        address: json["address"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -83,6 +85,7 @@ class Room {
         "room_member_menus": List<dynamic>.from(roomMemberMenus
             .map((x) => List<dynamic>.from(x.map((x) => x.toJson())))),
         "res": res.toJson(),
+        "address": address,
       };
 }
 

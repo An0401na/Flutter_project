@@ -40,7 +40,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
   int member_count = 2; //모집인원 저장하는 변수
   int time_count = 5; //모집시간 저장하는 변수
   final room_title = TextEditingController(); //TextField 사용하기 위한 변수
-  final address_detail = TextEditingController();
+  final address = TextEditingController();
   // 방이름 정보 -> room_title.text에 저장됨
 
   List<Marker> myMarker = [];
@@ -90,22 +90,23 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
     super.initState();
 
     new_room = Room(
-      roomId: 0,
-      roomName: '',
-      resId: 0,
-      hostUserId: 0,
-      roomMaxPeople: 0,
-      roomExpireTime: DateTime.now(),
-      roomStartTime: DateTime.now(),
-      roomLocationX: "0",
-      roomLocationY: "0",
-      roomOrderPrice: 0,
-      roomDelFee: 0,
-      roomIsActive: 0,
-      roomMemberMenus: [],
-      roomUser: [],
-      res: RoomRes(resId: 0, resName: '', resLocation: '', resMinOrderPrice: 0),
-    );
+        roomId: 0,
+        roomName: '',
+        resId: 0,
+        hostUserId: 0,
+        roomMaxPeople: 0,
+        roomExpireTime: DateTime.now(),
+        roomStartTime: DateTime.now(),
+        roomLocationX: "0",
+        roomLocationY: "0",
+        roomOrderPrice: 0,
+        roomDelFee: 0,
+        roomIsActive: 0,
+        roomMemberMenus: [],
+        roomUser: [],
+        res: RoomRes(
+            resId: 0, resName: '', resLocation: '', resMinOrderPrice: 0),
+        address: "");
 
     getLocation();
   }
@@ -142,7 +143,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
     }
   }
 
-  void printn() {
+  void createRoomButtonPressed() {
     curTime = DateTime.now();
     new_room.roomName = room_title.text;
     new_room.resId = widget.res.resId;
@@ -174,6 +175,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
         resLocation: widget.res.resLocation,
         resMinOrderPrice: widget.res.resMinOrderPrice,
         resId: widget.res.resId);
+    new_room.address = address.text;
 
     Services_Room.postRoom(new_room).then((tmp) {
       setState(() {
@@ -188,7 +190,8 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
         print("음식 받을 곳(위도) : " + myMarker[0].position.latitude.toString());
         print("음식 받을 곳(경도) : " + myMarker[0].position.longitude.toString());
         print("인원 : " + jsonEncode(new_room.roomUser));
-        print("메뉴 :" + jsonEncode(new_room.roomMemberMenus));
+        print("메뉴 : " + jsonEncode(new_room.roomMemberMenus));
+        print("세부주소 : " + new_room.address);
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -440,7 +443,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                             ),
-                            controller: address_detail, //Textfield넣어야 함
+                            controller: address, //Textfield넣어야 함
                           ),
                         ),
                       ],
@@ -480,7 +483,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                             ],
                           );
                         });
-                  } else if (address_detail.text.isEmpty) {
+                  } else if (address.text.isEmpty) {
                     showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -499,7 +502,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                           );
                         });
                   } else {
-                    printn();
+                    createRoomButtonPressed();
                   }
                 },
               ),

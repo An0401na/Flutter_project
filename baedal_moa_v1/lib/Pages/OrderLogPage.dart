@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -31,8 +32,11 @@ class _OrderLogPageState extends State<OrderLogPage> {
   @override
   Widget build(BuildContext context) {
     return orderList.isEmpty
-        ? Center(
-            child: Text('주문 내역이 없습니다.'),
+        ? Container(
+            color: CupertinoColors.secondarySystemBackground,
+            child: Center(
+              child: Text('주문 내역이 없습니다.'),
+            ),
           )
         : SingleChildScrollView(
             child: getOrderList(),

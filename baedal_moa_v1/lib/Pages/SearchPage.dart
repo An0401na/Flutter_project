@@ -1,4 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import '../Model/Res.dart';
+import '../Services/Services_Res.dart';
+import 'RestaurantInfo.dart';
 
 class SearchPage extends StatefulWidget {
   int userId;
@@ -11,121 +16,124 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  final searching = TextEditingController();
-
+  final searchText = TextEditingController();
+  List<Res> _res = [];
   @override
   Widget build(BuildContext context) {
+    List<int> resIdList = [];
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.white,
-        title: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                decoration: InputDecoration(hintText: '검색어를 입력하세요'),
-                controller: searching,
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.white,
+          title: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  decoration: InputDecoration(hintText: '가게나 메뉴 이름으로 검색'),
+                  controller: searchText,
+                ),
               ),
-            ),
-            TextButton(
-                onPressed: () {
-                  print("검색");
-                },
-                child: Text(
-                  "검색",
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-                style: TextButton.styleFrom(
-                  backgroundColor: Colors.deepOrange,
-                ))
-          ],
+              TextButton(
+                  onPressed: () {
+                    print("검색");
+                    Services_Res.getSearchRes(searchText.text.trim())
+                        .then((Res1) {
+                      setState(() {
+                        _res = Res1;
+                      });
+                    });
+                  },
+                  child: Text(
+                    "검색",
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.deepOrange,
+                  ))
+            ],
+          ),
+          elevation: 1,
         ),
-        elevation: 1,
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            child: Text('우리 동네 맛집', style: TextStyle(fontSize: 25)),
-            padding: EdgeInsets.only(left: 10, top: 5),
-          ),
-          line,
-          Container(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  //사진을 넣을 컨테이너
-                  width: 100,
-                  height: 100,
-                  color: Colors.black12,
-                  margin: EdgeInsets.only(left: 10),
-                  child: Text('가게사진'), //나중에 사진 넣을 위치
-                ),
-                Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '롯데리아 경기대역점',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+        body: Container(
+          color: CupertinoColors.secondarySystemBackground,
+          child: ListView.separated(
+            separatorBuilder: (BuildContext context, int index) {
+              return Container(height: 1, color: Colors.grey);
+            },
+            itemCount: _res.length,
+            itemBuilder: (context, index) {
+              Res res = _res[index];
+              String image = res.resImageDir;
+              if (resIdList.contains(res.resId)) {
+                return Container();
+              }
+              resIdList.add(res.resId);
+              return ListTile(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Restaurant_info(
+                          roomId: 0,
+                          res: res,
+                          userId: widget.userId,
+                          image: image,
+                          isHost: true,
+                        ),
+                      ));
+                },
+                title: Row(children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Hero(
+                      tag: res.resId,
+                      child: Image.network(
+                        image,
+                        width: 100,
+                        height: 100,
                       ),
-                      Text('최소 주문 금액 : ' + '10000원',
-                          style: TextStyle(color: Colors.grey)),
-                      Text('배달요금 : ' + '0~3000원',
-                          style: TextStyle(color: Colors.grey)),
-                    ],
+                    ),
                   ),
-                  margin: EdgeInsets.only(left: 5),
-                ),
-              ],
-            ),
-            margin: EdgeInsets.only(top: 2),
-          ),
-          line,
-          Container(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  //사진을 넣을 컨테이너
-                  width: 100,
-                  height: 100,
-                  color: Colors.black12,
-                  margin: EdgeInsets.only(left: 10),
-                  child: Text('가게사진'), //나중에 사진 넣을 위치
-                ),
-                Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '수련반점',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            res.resName,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            "최소 주문 금액 : " +
+                                res.resMinOrderPrice.toString() +
+                                "원",
+                            style: TextStyle(fontSize: 14, color: Colors.grey),
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            "배달 요금 : " +
+                                res.deliveryFees.first.delFee.toString() +
+                                "~" +
+                                res.deliveryFees.last.delFee.toString() +
+                                " 원",
+                            style: TextStyle(fontSize: 14, color: Colors.grey),
+                          )
+                        ],
                       ),
-                      Text('최소 주문 금액 : ' + '8000원',
-                          style: TextStyle(color: Colors.grey)),
-                      Text('배달요금 : ' + '0~3000원',
-                          style: TextStyle(color: Colors.grey)),
-                    ],
+                    ),
                   ),
-                  margin: EdgeInsets.only(left: 5),
-                ),
-              ],
-            ),
-            margin: EdgeInsets.only(top: 2),
+                ]),
+              );
+            },
           ),
-          line,
-        ],
-      ),
-    );
+        ));
   }
-
-  @override
-  Widget line = Container(
-      padding: const EdgeInsets.only(left: 10, right: 10),
-      width: 500,
-      child: Divider(color: Colors.black, thickness: 1.0));
 }

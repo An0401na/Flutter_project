@@ -14,6 +14,7 @@ class Restaurant_List extends StatefulWidget {
   late int userId;
   late String curLoc;
   late bool isCategory;
+  late bool isLike;
   late String categoryName;
 
   Restaurant_List(
@@ -21,7 +22,8 @@ class Restaurant_List extends StatefulWidget {
       required this.userId,
       required this.curLoc,
       required this.isCategory,
-      required this.categoryName})
+      required this.categoryName,
+      required this.isLike})
       : super(key: key);
   @override
   _Restaurant_ListState createState() => _Restaurant_ListState();
@@ -52,6 +54,12 @@ class _Restaurant_ListState extends State<Restaurant_List> {
           _res = Res1;
         });
       });
+    } else if (widget.isLike) {
+      Services_Res.getLikedResList(widget.userId.toString()).then((Res1) {
+        setState(() {
+          _res = Res1;
+        });
+      });
     } else {
       Services_Res.getRests().then((Res1) {
         setState(() {
@@ -61,91 +69,112 @@ class _Restaurant_ListState extends State<Restaurant_List> {
     }
   }
 
+  AppBar LikedListAppBar() {
+    return AppBar(
+      automaticallyImplyLeading: false,
+      title: Center(
+        child: Text("찜 목록"),
+      ),
+      elevation: 1,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.isCategory ? widget.categoryName : widget.curLoc,
-              overflow: TextOverflow.fade,
-              style: TextStyle(color: Colors.black)),
-          elevation: 1,
-        ),
-        body: Container(
-          color: CupertinoColors.secondarySystemBackground,
-          child: ListView.separated(
-            separatorBuilder: (BuildContext context, int index) {
-              return Container(height: 1, color: Colors.grey);
-            },
-            itemCount: _res.length,
-            itemBuilder: (context, index) {
-              Res res = _res[index];
-              String image = res.resImageDir;
-              return ListTile(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Restaurant_info(
-                          roomId: 0,
-                          res: res,
-                          userId: widget.userId,
-                          image: image,
-                          isHost: true,
+        appBar: widget.isLike
+            ? LikedListAppBar()
+            : AppBar(
+                title: Text(
+                    widget.isCategory ? widget.categoryName : widget.curLoc,
+                    overflow: TextOverflow.fade,
+                    style: TextStyle(color: Colors.black)),
+                elevation: 1,
+              ),
+        body: widget.isLike && _res.isEmpty
+            ? Container(
+                color: CupertinoColors.secondarySystemBackground,
+                child: Center(child: Text("찜한 가게가 없습니다.")),
+              )
+            : Container(
+                color: CupertinoColors.secondarySystemBackground,
+                child: ListView.separated(
+                  separatorBuilder: (BuildContext context, int index) {
+                    return Container(height: 1, color: Colors.grey);
+                  },
+                  itemCount: _res.length,
+                  itemBuilder: (context, index) {
+                    Res res = _res[index];
+                    String image = res.resImageDir;
+                    return ListTile(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Restaurant_info(
+                                roomId: 0,
+                                res: res,
+                                userId: widget.userId,
+                                image: image,
+                                isHost: true,
+                              ),
+                            ));
+                      },
+                      title: Row(children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Hero(
+                            tag: res.resId,
+                            child: Image.network(
+                              image,
+                              width: 100,
+                              height: 100,
+                            ),
+                          ),
                         ),
-                      ));
-                },
-                title: Row(children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Hero(
-                      tag: res.resId,
-                      child: Image.network(
-                        image,
-                        width: 100,
-                        height: 100,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            res.resName,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 20),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 10.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  res.resName,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  "최소 주문 금액 : " +
+                                      res.resMinOrderPrice.toString() +
+                                      "원",
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.grey),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Text(
+                                  "배달 요금 : " +
+                                      res.deliveryFees.first.delFee.toString() +
+                                      "~" +
+                                      res.deliveryFees.last.delFee.toString() +
+                                      " 원",
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.grey),
+                                )
+                              ],
+                            ),
                           ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            "최소 주문 금액 : " +
-                                res.resMinOrderPrice.toString() +
-                                "원",
-                            style: TextStyle(fontSize: 14, color: Colors.grey),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            "배달 요금 : " +
-                                res.deliveryFees[0].delFee.toString() +
-                                "~" +
-                                res.deliveryFees.last.delFee.toString() +
-                                " 원",
-                            style: TextStyle(fontSize: 14, color: Colors.grey),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ]),
-              );
-            },
-          ),
-        ));
+                        ),
+                      ]),
+                    );
+                  },
+                ),
+              ));
   }
 }
