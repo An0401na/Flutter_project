@@ -8,6 +8,7 @@ import 'package:baedal_moa/Pages/MenuInfo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/services.dart';
 import '../Model/Res.dart';
 import '../Model/Menu.dart';
 import '../Model/AppUser.dart';
@@ -39,6 +40,7 @@ class _Restaurant_infoState extends State<Restaurant_info> {
   bool isLiked = false;
   int menuCnt = 0;
   late Icon icon;
+  bool iconLoading = false;
 
   void initState() {
     super.initState();
@@ -61,6 +63,7 @@ class _Restaurant_infoState extends State<Restaurant_info> {
           if (r.resId == widget.res.resId) isLiked = true;
         }
         icon = setIcon(isLiked);
+        iconLoading = true;
       });
     });
   }
@@ -152,7 +155,15 @@ class _Restaurant_infoState extends State<Restaurant_info> {
                             overflow: TextOverflow.visible,
                           ),
                         ),
-                        IconButton(onPressed: pressedLikeButton, icon: icon)
+                        IconButton(
+                            onPressed: pressedLikeButton,
+                            icon: iconLoading
+                                ? icon
+                                : Icon(
+                                    Icons.favorite_border,
+                                    size: 40,
+                                    color: Colors.deepOrange,
+                                  ))
                       ],
                     ),
                   ),
@@ -297,17 +308,22 @@ class _Restaurant_infoState extends State<Restaurant_info> {
                             width: 100,
                           ),
                         )),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(m.menuName),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(m.menuPrice.toString() + "원")
-                        ],
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 10.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              m.menuName,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(m.menuPrice.toString() + "원")
+                          ],
+                        ),
                       ),
                     ),
                   ]),

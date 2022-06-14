@@ -70,7 +70,7 @@ class Services_Res {
         "user_id": userId
       });
       print("getLikedResList의 상태 코드 : " + response.statusCode.toString());
-      print(response.body);
+      // print(response.body);
       if (response.statusCode == 200) {
         final List<Res> Res1 = resFromJson(response.body);
         return Res1;

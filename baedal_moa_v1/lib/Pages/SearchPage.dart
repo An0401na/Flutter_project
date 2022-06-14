@@ -21,6 +21,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     List<int> resIdList = [];
+    bool resDuplicated = false;
     return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -58,13 +59,16 @@ class _SearchPageState extends State<SearchPage> {
           color: CupertinoColors.secondarySystemBackground,
           child: ListView.separated(
             separatorBuilder: (BuildContext context, int index) {
+              if (resDuplicated) return Container();
               return Container(height: 1, color: Colors.grey);
             },
             itemCount: _res.length,
             itemBuilder: (context, index) {
+              resDuplicated = false;
               Res res = _res[index];
               String image = res.resImageDir;
               if (resIdList.contains(res.resId)) {
+                resDuplicated = true;
                 return Container();
               }
               resIdList.add(res.resId);

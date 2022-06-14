@@ -69,6 +69,7 @@ class _Baedal_MoaState extends State<Baedal_Moa> {
           } else if (snapshot.hasData) {
             print("app");
             return MaterialApp(
+                debugShowCheckedModeBanner: false,
                 title: 'Baedal_Moa',
                 theme: ThemeData(
                     appBarTheme: AppBarTheme(
